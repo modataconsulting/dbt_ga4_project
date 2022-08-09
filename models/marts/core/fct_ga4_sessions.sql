@@ -1,11 +1,11 @@
--- Fact table for sessions, joined on 'session_key' & 'client_id'.
+-- Fact table for sessions, joined on 'session_key' & 'user_key'.
 
 WITH session_metrics AS (
 
     SELECT
         session_key,
-        client_id,
-        MIN(event_date_dt) AS session_start_date,
+        user_key,
+        MIN(event_date) AS session_start_date,
         MIN(event_timestamp) AS session_start_timestamp,
         COUNTIF(event_name = 'page_view') AS count_page_views,
         SUM(event_value_in_usd) AS sum_event_value_in_usd,

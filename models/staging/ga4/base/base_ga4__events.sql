@@ -9,8 +9,8 @@
             materialized = 'incremental',
             incremental_strategy = 'insert_overwrite',
             partition_by = {
-                "field": "event_date_dt",
-                "data_type": "date",
+                'field': 'event_date',
+                'data_type': 'date',
             },
             partitions = partitions_to_replace,
         )
@@ -21,8 +21,8 @@
             materialized = 'incremental',
             incremental_strategy = 'insert_overwrite',
             partition_by = {
-                "field": "event_date_dt",
-                "data_type": "date",
+                'field': 'event_date',
+                'data_type': 'date',
             },
         )
     }}
@@ -33,19 +33,19 @@
 WITH source AS (
 
     SELECT 
-        PARSE_DATE('%Y%m%d', event_date) AS event_date_dt, -- KEEP THIS AS 'event_date'?? --
-        event_timestamp,
+        PARSE_DATE('%Y%m%d', event_date) AS event_date,
+        TIMESTAMP_MICROS(event_timestamp) AS event_timestamp,
         event_name,
         event_params,
-        event_previous_timestamp,
+        TIMESTAMP_MICROS(event_previous_timestamp) AS event_previous_timestamp,
         event_value_in_usd,
         event_bundle_sequence_id,
-        event_server_timestamp_offset,
+        TIMESTAMP_MICROS(event_server_timestamp_offset) AS event_server_timestamp_offset,
         user_id,
-        user_pseudo_id AS client_id,
+        user_pseudo_id,
         privacy_info,
         user_properties,
-        user_first_touch_timestamp,
+        TIMESTAMP_MICROS(user_first_touch_timestamp) AS user_first_touch_timestamp,
         user_ltv,
         device,
         geo,
@@ -63,7 +63,7 @@ WITH source AS (
 
     {%- if is_incremental() %}
         
-        -- Incrementally add new events. Filters on _TABLE_SUFFIX using the max event_date_dt value found in {{ this }}.
+        -- Incrementally add new events. Filters on _TABLE_SUFFIX using the max event_date value found in {{ this }}.
         -- See https://docs.getdbt.com/reference/resource-configs/bigquery-configs#the-insert_overwrite-strategy
         AND PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) >= _dbt_max_partition
 
@@ -74,7 +74,7 @@ WITH source AS (
 renamed as (
 
     SELECT 
-        event_date_dt,
+        event_date,
         event_timestamp,
         LOWER(REPLACE(TRIM(event_name), ' ', '_')) AS event_name, -- Clean up all event names to be snake cased
         event_params,
@@ -83,7 +83,7 @@ renamed as (
         event_bundle_sequence_id,
         event_server_timestamp_offset,
         user_id,
-        client_id,
+        user_pseudo_id,
         privacy_info,
         user_properties,
         user_first_touch_timestamp,
@@ -97,15 +97,22 @@ renamed as (
         ecommerce,
         items,
 
-        -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC -- 
+        -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
         {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
         {{ unnest_by_key('event_params', 'page_location') }},
         {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
-        {{ unnest_by_key('event_params', 'session_engaged', 'int') }},
+        
+        -- REFACTOR THIS & THE MACRO TO NOT INCLUDE AS TO FIX THIS REOCCURING ISSUE --
+        CASE
+            WHEN (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'session_engaged') = '1' THEN 1
+        END as session_engaged,
+        
+        {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
         {{ unnest_by_key('event_params', 'page_title') }},
         {{ unnest_by_key('event_params', 'page_referrer') }},
         {{ unnest_by_key('event_params', 'source') }},
         {{ unnest_by_key('event_params', 'medium') }},
+        {{ unnest_by_key('event_params', 'campaign') }},
 
         IF(event_name = 'page_view', 1, 0) AS is_page_view,
         IF(event_name = 'purchase', 1, 0) AS is_purchase

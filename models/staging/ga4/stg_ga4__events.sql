@@ -16,20 +16,37 @@ WITH base_events AS (
 
 ),
 
+-- Add a unique key for the user that checks for user_id and then pseudo_user_id.
+add_user_key AS (
+
+    SELECT
+        *,
+        CASE
+            WHEN user_id IS NOT NULL THEN TO_BASE64(MD5(user_id))
+            WHEN user_pseudo_id IS NOT NULL THEN TO_BASE64(MD5(user_pseudo_id))
+            ELSE NULL -- this case is reached when privacy settings are enabled
+        END AS user_key
+    FROM
+        base_events
+
+),
+
 -- Add unique keys for sessions.
 add_session_key AS (
 
     SELECT
         *,
-        MD5(
-            CONCAT(
-                stream_id,
-                client_id,
-                CAST(ga_session_id AS STRING)
+        TO_BASE64(
+            MD5(
+                CONCAT(
+                    stream_id,
+                    CAST(user_key AS STRING),
+                    CAST(ga_session_id AS STRING)
+                )
             )
         ) AS session_key -- Surrogate key to determine unique session across streams and users. Sessions do NOT reset after midnight in GA4.
     FROM
-        base_events
+        add_user_key
 
 ),
 
@@ -49,10 +66,12 @@ add_event_key AS (
 
     SELECT
         *,
-        MD5(
-            CONCAT(
-                CAST(TO_BASE64(session_key) AS STRING), -- MAY NEED ADD 'TO_BASE64' BEFORE THIS --
-                CAST(session_event_number AS STRING)
+        TO_BASE64(
+            MD5(
+                CONCAT(
+                    CAST(session_key AS STRING),
+                    CAST(session_event_number AS STRING)
+                )
             )
         ) AS event_key -- Surrogate key for unique events.
     FROM

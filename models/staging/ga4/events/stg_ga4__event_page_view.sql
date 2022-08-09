@@ -5,12 +5,30 @@ WITH page_view_with_params AS (
     SELECT
         *,
         {{ unnest_by_key('event_params', 'entrances', 'int') }},
-        {{ unnest_by_key('event_params', 'value', 'float') }}
+        {{ unnest_by_key('event_params', 'value', 'float') }},
 
+        LAG(page_location, 1) OVER (
+            PARTITION BY (session_key)
+            ORDER BY
+                event_timestamp asc
+        ) AS session_previous_page,
+        
+        {%- for i in range(4) %}
+        
+        CASE
+            WHEN SPLIT(SPLIT(page_location, '/')[safe_ordinal({{ i+4 }})], '?')[safe_ordinal(1)] = '' THEN NULL
+            ELSE CONCAT(
+                '/',
+                SPLIT(SPLIT(page_location, '/')[safe_ordinal({{ i+4 }})], '?')[safe_ordinal(1)]
+            )
+        END AS pagepath_level_{{ i+1 }},
+        
+        {%- endfor%}
+        
         {%- if var('page_view_custom_parameters', 'none') != 'none' %}
-
-        {{ stage_custom_parameters(var('page_view_custom_parameters')) }}
-
+        
+        {{ ga4.stage_custom_parameters(var('page_view_custom_parameters')) }}
+        
         {%- endif %}
     FROM
         {{ ref('stg_ga4__events') }}
@@ -19,37 +37,15 @@ WITH page_view_with_params AS (
 
 ),
 
-first_last_pageview_session AS (
-
-    SELECT
-        *
-    FROM
-        {{ ref('stg_ga4__sessions_first_last_pageviews') }}
-
-),
-
--- Determine the session's first pageview pageview based on event_timestamp. This is redundant with the 'entrances' int value, but calculated in the warehouse so a bit more transparent in how it operates.
-first_pageview_joined AS (
-
-    SELECT
-        page_view_with_params.*, -- IS THE TABLE NAME WITH . NOTATION NECESSARY IN A JOIN? --
-        IF(first_last_pageview_session.first_page_view_event_key IS NULL, FALSE, TRUE) AS is_entrance
-    FROM
-        page_view_with_params
-        LEFT JOIN first_last_pageview_session
-            ON page_view_with_params.event_key = first_last_pageview_session.first_page_view_event_key
-
-),
-
 last_pageview_joined AS (
 
     SELECT
-        first_pageview_joined.*, -- IS THE TABLE NAME WITH . NOTATION NECESSARY IN A JOIN? --
-        IF(first_last_pageview_session.last_page_view_event_key IS NULL, FALSE, TRUE) AS is_exit
+        page_view_with_params.*,
+        IF(first_last_pageview_session.last_page_view_event_key IS NULL, NULL, 1) AS exits
     FROM
-        first_pageview_joined
-        LEFT JOIN first_last_pageview_session
-            ON first_pageview_joined.event_key = first_last_pageview_session.last_page_view_event_key
+        page_view_with_params
+        LEFT JOIN {{ ref('stg_ga4__sessions_first_last_pageviews') }} first_last_pageview_session
+            ON page_view_with_params.event_key = first_last_pageview_session.last_page_view_event_key
 
 )
 

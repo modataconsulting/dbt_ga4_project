@@ -1,5 +1,3 @@
-# ADD INTRO/DESCRIPTION HERE #
-
 name: 'dbt_ga4_project'
 version: '1.0.0'
 config-version: 2
@@ -22,8 +20,37 @@ clean-targets:         # directories to be removed by `dbt clean`
 vars:
     project: "bigquery-public-data"
     dataset: "ga4_obfuscated_sample_ecommerce"
-    start_date: "20210120"
+    start_date: "20210120" ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
+########################TO DO##############################
+# Query parameter exclusions
+# You can remove specific query parameters from the page_location by listing them here
+#    query_parameter_exclusions: ["gclid","fbclid","_ga"]
+
+# User Properties
+# User-scoped event properties can be assigned using the following variable configuration in your dbt_project.yml
+# The dim_ga4__users dimension table will be updated to include the last value seen for each user
+#      user_properties:
+#        - event_parameter: "page_location"
+#          user_property_name: "most_recent_page_location"  
+#          value_type: "string_value"
+#        - event_parameter: "another_event_param"
+#          user_property_name: "most_recent_param"  
+#          value_type: "string_value"
+
+# Custom parameters
+# custom parameters are registered by creating a var matching the event name where the custom parameter occurs
+# and providing the name, matching the parameters name
+# and matching the value_type to the type of column in BigQuery (string_value, int_value, float_value, double_value)
+# the below example shows a page_view enhanced with the clean_event event parameter from the ga4_obfuscated_sample_ecommerce project
+#    page_view:
+#      - name: "clean_event"
+#        value_type: "string_value"  
+########################TO DO##############################
+
+# The main base events model is materialized as a partitioned, incremental table.
+# The staging models are materialized as views.
+# The dimensional models are materialized as tables.
 models:
   dbt_ga4_project:
     +materialized: view

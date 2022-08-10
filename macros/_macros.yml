@@ -1,0 +1,23 @@
+version: 2
+
+macros:
+  - name: default_channel_groupings
+    description: '{{ doc("default_channel_groupings") }}'
+
+  - name: get_position
+    description: '{{ doc("get_position") }}'
+
+  - name: stage_custom_parameters
+    description: '{{ doc("stage_custom_parameters") }}'
+
+  - name: unnest_by_key
+    description: '{{ doc("unnest_by_key") }}'
+
+  - name: extract_hostname_from_url
+    description: '{{ doc("extract_hostname_from_url") }}'
+
+  - name: extract_query_string_from_url
+    description: '{{ doc("extract_query_string_from_url") }}'
+
+  - name: remove_query_parameters
+    description: '{{ doc("remove_query_parameters") }}'

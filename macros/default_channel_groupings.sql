@@ -1,7 +1,3 @@
--- Inspired by https://github.com/llooker/ga_four_block_dev/blob/master/views/sessions.view.lkml
--- Google's documentation is here: https://support.google.com/analytics/answer/9756891?hl=en
--- source_category Excel file can be downloaded from the above link and may change over time
-
 {%- macro default_channel_grouping(source, medium, source_category) -%}
 
         CASE

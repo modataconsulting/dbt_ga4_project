@@ -38,6 +38,11 @@ vars:
   dataset: "ga4_obfuscated_sample_ecommerce"
   start_date: "20210120" ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
+# TESTING SOME EVENTS:
+  event_names: "{% set get_event_names() %}"
+  event_params: "{% set get_event_params() %}"
+
+
 ########################TO DO##############################
 # Query parameter exclusions
 # You can remove specific query parameters from the page_location by listing them here

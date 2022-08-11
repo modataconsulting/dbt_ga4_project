@@ -9,8 +9,8 @@
             materialized = 'incremental',
             incremental_strategy = 'insert_overwrite',
             partition_by = {
-                'field': 'event_date',
-                'data_type': 'date',
+                "field": "event_date",
+                "data_type": "date",
             },
             partitions = partitions_to_replace,
         )
@@ -21,8 +21,8 @@
             materialized = 'incremental',
             incremental_strategy = 'insert_overwrite',
             partition_by = {
-                'field': 'event_date',
-                'data_type': 'date',
+                "field": "event_date",
+                "data_type": "date",
             },
         )
     }}
@@ -103,9 +103,12 @@ renamed as (
         {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
         
         -- REFACTOR THIS & THE MACRO TO NOT INCLUDE AS TO FIX THIS REOCCURING ISSUE --
-        CASE
-            WHEN (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'session_engaged') = '1' THEN 1
-        END as session_engaged,
+        -- CASE
+        --     WHEN (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'session_engaged') = '1' THEN 1
+        -- END AS session_engaged,
+
+        -- TRY USING THIS INSTEAD --
+        IF({{ unnest_by_key2('event_params', 'session_engaged') }} = '1', 1, NULL) AS session_engaged, -- USE NULL OR 0? --
         
         {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
         {{ unnest_by_key('event_params', 'page_title') }},

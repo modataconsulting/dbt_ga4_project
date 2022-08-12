@@ -6,8 +6,8 @@ sources:
     schema: "{{ var('dataset') }}" 
     tables:
       - name: events
-        identifier: events_* # Scan across all sharded event tables. Use the 'start_date' variable to limit this scan.
-        description: Main events table exported by GA4. Sharded by date. 
+        identifier: events_* # Scans across all sharded event tables. Use the 'start_date' variable in `dbt_project.yml` file to limit this scan.
+        description: Main events table composed of the exported GA4 day sharded event tables (event_YYYMMDD).
       
       - name: events_intraday
         identifier: events_intraday_*

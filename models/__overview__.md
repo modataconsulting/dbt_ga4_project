@@ -3,14 +3,17 @@
 # dbt GA4 Project
 First and foremost, this project is based off of the dbt [GA4 Package by Velir](https://hub.getdbt.com/velir/ga4/latest), but has been modified and refactored for internal purposes.
 
-[...INTRO...]
+This project uses [Google Analytics 4 BigQuery Exports](https://support.google.com/analytics/answer/7029846?hl=en&ref_topic=9359001) as its source data, and offers useful base transformations to provide report-ready dimension & fact models that can be used for reporting purposes, blending with other data, and/or feature engineering for ML models.
 
-This project uses [Google Analytics 4 BigQuery Exports](https://support.google.com/analytics/answer/7029846?hl=en&ref_topic=9359001) as its source data, and offers useful base transformations to provide report-ready dimension & fact models that can be used for reporting purposes, blending with other data, and/or input for ML models.
+## Style Guide:
+This project and any future projects that may be based off of this intial `dbt_ga4_project`, will be following [This Project's Style Guide...IN PROGRESS](), which borrows ideals from the following Style Guides:
+- [dbt's Style Guide](https://github.com/dbt-labs/corp/blob/main/dbt_style_guide.md)
+- [GitLab's SQL Style Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide)
 
 # Models
 ## Core Models
 | Model Name | Description |
-|-------|-------------|
+|------------|-------------|
 | dim_ga4__users | This is the Dimension Table for user-level Dimensions, such as `first` & `last_seen_date`, `geo`, and `traffic_source`. This table is grouped by the hashed `user_key` dimension, which is based on `user_id`, or `user_pseudo_id` if one doesn't exist. | 
 | dim_ga4__sessions | This is the dimension table for session-level dimensions, such as `landing_page`, `device`, and campaign-related attributes. |
 | fct_ga4__pages | This is the Fact Table for page-related Metrics, such as `page_views`, `exits`, and `time_on_page`. This table is grouped by `page_title`, `event_date`, and `page_location`. |
@@ -18,15 +21,26 @@ This project uses [Google Analytics 4 BigQuery Exports](https://support.google.c
 
 ## Staging Models
 | Model Name | Description |
-|-------|-------------|
+|------------|-------------|
 | stg_ga4__events | Creates a table with cleaned event data that is enhanced with useful `event_keys` and `session keys`. |
 | stg_ga4__event_* | Creates a table per event that unnests all of the event parameters specific to that event (e.g. `page_view`, `click`, or `scroll`). |
 | stg_ga4__event_items | Creates a table for all items associated with e-commerce events (e.g. `purchase`, `add to cart`, etc.). |
-| stg_ga4__event_to_query_string_params | Creates a table that designates a traffic source via the first `source`, `medium`, `campaign`, and `default_channel_grouping` for each session. |
-| stg_ga4__user_properties | Creates a session-based table for the events that you mark as being a `conversion_event`. |
-| stg_ga4__derived_user_properties | Maps any and all query parameters (e.g. `metric_here`, `and_here`, etc.) that were contained in each event's `page_location`. |
-| stg_ga4__session_conversions | Creates a table that unnests the most recent GA4 `user_properties`, as well as any others  that you mark in `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table. |
-| stg_ga4__sessions_traffic_sources | ...TO FINISH... |
+| stg_ga4__sessions_traffic_sources | Creates a table that designates a traffic source via the first `source`, `medium`, `campaign`, and `default_channel_grouping` for each session. |
+| stg_ga4__session_conversions | Creates a session-based table for the events that you mark as being a `conversion_event`. |
+| stg_ga4__event_to_query_string_params | Maps any and all query parameters (e.g. `metric_here`, `and_here`, etc.) that were contained in each event's `page_location`. |
+| stg_ga4__user_properties | Creates a table that unnests the most recent GA4 `user_properties`, as well as any others  that you mark in `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table. |
+| stg_ga4__derived_user_properties | Creates a table of `derived_user_properties`, which are extracted from the `event_params` specified in the `dbt_project.yml` file,  for the purpose of including them in the final `dim_ga4_users` table. |
+
+# Macros
+| Macro Name | Description |
+|------------|-------------|
+| default_channel_groupings |  |
+| get_position |  |
+| stage_custom_parameters |  |
+| unnest_by_key |  |
+| extract_hostname_from_url |  |
+| extract_query_string_from_url |  |
+| remove_query_parameters |  |
 
 # Seeds
 | Seed File | Description |
@@ -34,11 +48,6 @@ This project uses [Google Analytics 4 BigQuery Exports](https://support.google.c
 | ga4_source_categories.csv| Google's mapping between `source` and `source_category`. More info and the download can be found [here](https://support.google.com/analytics/answer/9756891?hl=en) |
 
 Make sure to run `dbt seed` before running `dbt run`.
-
-## Style Guide:
-This project and any future projects that may be based off of this intial `dbt_ga4_project`, will be following [This Project's Style Guide...IN PROGRESS](), which borrows ideals from the following Style Guides:
-- [dbt's Style Guide](https://github.com/dbt-labs/corp/blob/main/dbt_style_guide.md)
-- [GitLab's SQL Style Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide)
 
 # Installation & Configuration
 ## Setup
@@ -68,10 +77,9 @@ vars:
 Find more info about the GA4 obfuscated dataset [here](https://support.google.com/analytics/answer/10937659?hl=en#zippy=%2Cin-this-article). 
 
 ## Optional Variables
-
 ### Query Parameter Exclusions
 
-Setting `query_parameter_exclusions` will remove query string parameters from the `page_location` field for all downstream processing. Original parameters are captured in a new `original_page_location` field. Ex:
+Setting any `query_parameter_exclusions` will remove query string parameters from the `page_location` field for all downstream processing. Original parameters are captured in a new `original_page_location` field. Ex:
 
 ```
 vars:
@@ -155,20 +163,23 @@ vars:
 
 ## Resources:
 - GA4 Resources:
-    - [GA4 BigQuery Export schema](https://support.google.com/analytics/answer/7029846?hl=en&ref_topic=9359001)
+  - [GA4 BigQuery Export schema](https://support.google.com/analytics/answer/7029846?hl=en&ref_topic=9359001)
 - BigQuery Resources:
-    - [BigQuery Docs](https://cloud.google.com/bigquery/docs)
-    - [BigQuery: Functions, Operators, and Conditionals](https://cloud.google.com/bigquery/docs/reference/standard-sql/functions-and-operators)
+  - [BigQuery Docs](https://cloud.google.com/bigquery/docs)
+  - [BigQuery: Functions, Operators, and Conditionals](https://cloud.google.com/bigquery/docs/reference/standard-sql/functions-and-operators)
+  - [BigQuery: Query Syntax](https://cloud.google.com/bigquery/docs/reference/standard-sql/query-syntax)
 - dbt Resources:
-    - [Getting Started with dbt Cloud](https://docs.getdbt.com/guides/getting-started)
-        - [Getting Started with dbt Core](https://docs.getdbt.com/guides/getting-started/learning-more/getting-started-dbt-core)
-        - [Refactoring legacy SQL to dbt](https://docs.getdbt.com/guides/getting-started/learning-more/refactoring-legacy-sql)
-    - [Best Practices](https://docs.getdbt.com/guides/best-practices)
+  - [Getting Started with dbt Cloud](https://docs.getdbt.com/guides/getting-started)
+    - [Getting Started with dbt Core](https://docs.getdbt.com/guides/getting-started/learning-more/getting-started-dbt-core)
+    - [Refactoring legacy SQL to dbt](https://docs.getdbt.com/guides/getting-started/learning-more/refactoring-legacy-sql)
+  - [Best Practices](https://docs.getdbt.com/guides/best-practices)
+  - [GitLab's dbt Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/dbt-guide/)
 - Jinja Resources:
-    - [Jinja Template Designer Documentation](https://jinja.palletsprojects.com/en/3.1.x/templates)
+  - [Jinja Template Designer Documentation](https://jinja.palletsprojects.com/en/3.1.x/templates)
 - Project References:
-    - [GA4 dbt Package](https://github.com/Velir/dbt-ga4.git)
-    - [Stacktonic dbt Example Project](https://github.com/stacktonic-com/stacktonic-dbt-example-project)
+  - [GA4 dbt Package](https://github.com/Velir/dbt-ga4.git)
+  - [Stacktonic dbt Example Project](https://github.com/stacktonic-com/stacktonic-dbt-example-project)
+  - Also inspired by [this](https://github.com/llooker/ga_four_block_dev/blob/master/views/sessions.view.lkml)
 - [SQL Formatter](https://smalldev.tools/sql-formatter-online)
 
 {% enddocs %}

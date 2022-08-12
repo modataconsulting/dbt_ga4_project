@@ -1,26 +1,275 @@
 version: 2
 
 models:
+# USERS DIMENSION TABLE #
   - name: dim_ga4__users
     description: '{{ doc("dim_ga4__users") }}'
     columns:
       - name: user_key
+        description: A hashed primary key for each user, which is based on 'user_id', or' user_pseudo_id' if one doesn't exist.
         tests:
           - unique
 
+      - name: first_seen_timestamp
+        description: Timestamp of when a user was first seen, measured via their first interaction or session_start.
+
+      - name: first_seen_date
+        description: Date of when a user was first seen, measured via their first interaction or session_start.
+
+      - name: last_seen_timestamp
+        description: Timestamp of when a user was last seen, measured via their last interaction or session_start.
+
+      - name: last_seen_date
+        description: Date of when a user was last seen, measured via their last interaction or session_start. 
+
+      - name: num_sessions
+        description: The number of sessions that began on your website or application.
+
+      - name: num_page_views
+        description: The number of mobile app screens or web pages a user saw. Repeated views of a single screen or page are counted.
+
+      - name: num_purchases
+        description: The total number of purchases on your website or application for a user.
+
+      # FIRST_GEO #
+      - name: continent
+        description: The continent from which user activity originated. For example, if someone visits your websites from the United States, the text 'Americas' populates the dimension.
+      - name: sub_continent
+        description: The subcontinent from which user activity originated. For example, if someone visits your website from the United States, the text 'Northern America' populates the dimension.
+      - name: country
+        description: The country from which user activity originated. For example, if someone visits your website from the United States, the text 'United States' populates the dimension.
+      - name: region
+        description: The geographic region from which user activity originated. For example, if someone visits your website from New York City, the text 'New York' populates the dimension. If someone visits your website from England, the text 'England' populates the dimension.
+      - name: city
+        description: The city from which user activity originates. For example, if someone visits your website from New York City, the text 'New York' populates the dimension.
+
+      # FIRST_DEVICE #
+      - name: category
+        description: The type of device from which user activity originated. Device categories include 'desktop', 'mobile', and 'tablet'.
+      - name: mobile_brand_name
+        description: The brand name of the mobile device (e.g., Motorola, LG, or Samsung).
+      - name: mobile_model_name
+        description: The device model name (e.g., iPhone 5s or SM-J500M).
+      - name: mobile_marketing_name
+        description: FIX THIS LATER.
+      - name: mobile_os_hardware_model
+        description: FIX THIS LATER.
+      - name: operating_system
+        description: The operating system used by visitors on your website or application. Typical operating systems include 'Android', 'Chrome OS', 'Macintosh', and 'Windows'.
+      - name: operating_system_version
+        description: The operating system version used by visitors on your website or application. (e.g., '9.3.2' or '5.1.1').
+      - name: vendor_id
+        description: FIX THIS LATER.
+      - name: advertising_id
+        description: FIX THIS LATER.
+      - name: language
+        description: The name of the language of a user's browser or device (e.g., 'French', 'English').
+      - name: is_limiting_ad_tracking
+        description: FIX THIS LATER.
+      - name: time_zone_offset_seconds
+        description: FIX THIS LATER.
+      - name: browser
+        description: The browser from which user activity originated. Typical browsers include 'Chrome', 'Edge', 'Firefox', 'Internet Explorer', 'Opera', and 'Safari'.
+      - name: browser_version
+        description: The version of the browser from which user activity originated. For example, the browser version might be '96.0.4664.110'.
+
+      # FIRST_TRAFFIC_SOURCE #
+      - name: medium
+        description: The medium by which the user was first acquired.
+      - name: name
+        description: FIX THIS LATER.
+      - name: source
+        description: The source by which the user was first acquired.
+
+      # LAST_GEO #
+      - name: continent
+        description: The continent from which user activity originated. For example, if someone visits your websites from the United States, the text 'Americas' populates the dimension.
+      - name: sub_continent
+        description: The subcontinent from which user activity originated. For example, if someone visits your website from the United States, the text 'Northern America' populates the dimension.
+      - name: country
+        description: The country from which user activity originated. For example, if someone visits your website from the United States, the text 'United States' populates the dimension.
+      - name: region
+        description: The geographic region from which user activity originated. For example, if someone visits your website from New York City, the text 'New York' populates the dimension. If someone visits your website from England, the text 'England' populates the dimension.
+      - name: city
+        description: The city from which user activity originates. For example, if someone visits your website from New York City, the text 'New York' populates the dimension.
+
+      # LAST_DEVICE #
+      - name: category
+        description: The type of device from which user activity originated. Device categories include 'desktop', 'mobile', and 'tablet'.
+      - name: mobile_brand_name
+        description: The brand name of the mobile device (e.g., Motorola, LG, or Samsung).
+      - name: mobile_model_name
+        description: The device model name (e.g., iPhone 5s or SM-J500M).
+      - name: mobile_marketing_name
+        description: FIX THIS LATER.
+      - name: mobile_os_hardware_model
+        description: FIX THIS LATER.
+      - name: operating_system
+        description: The operating system used by visitors on your website or application. Typical operating systems include 'Android', 'Chrome OS', 'Macintosh', and 'Windows'.
+      - name: operating_system_version
+        description: The operating system version used by visitors on your website or application. (e.g., '9.3.2' or '5.1.1').
+      - name: vendor_id
+        description: FIX THIS LATER.
+      - name: advertising_id
+        description: FIX THIS LATER.
+      - name: language
+        description: The name of the language of a user's browser or device (e.g., 'French', 'English').
+      - name: is_limiting_ad_tracking
+        description: FIX THIS LATER.
+      - name: time_zone_offset_seconds
+        description: FIX THIS LATER.
+      - name: browser
+        description: The browser from which user activity originated. Typical browsers include 'Chrome', 'Edge', 'Firefox', 'Internet Explorer', 'Opera', and 'Safari'.
+      - name: browser_version
+        description: The version of the browser from which user activity originated. For example, the browser version might be '96.0.4664.110'.
+
+      # LAST_TRAFFIC_SOURCE #
+      - name: medium
+        description: The medium by which the user was last acquired.
+      - name: name
+        description: FIX THIS LATER.
+      - name: source
+        description: The source by which the user was last acquired.
+
+      - name: first_page_location
+        description: The complete URL of the webpage that a user visited first on your website. For example, if someone visits www.googlemerchandisestore.com/Bags?theme=1, then the complete URL will populate the dimension.
+
+      - name: first_page_hostname
+        description: The subdomain and domain names of the URL that a user visited first on your website. For example, the hostname of 'www.example.com/contact.html' is 'www.example.com'.
+
+      - name: first_page_referrer
+        description: The first referring URL, which is the user's previous URL and can be your website's domain or other domains.
+
+      - name: last_page_location
+        description: The complete URL of the webpage that a user visited last on your website. For example, if someone visits www.googlemerchandisestore.com/Bags?theme=1, then the complete URL will populate the dimension.
+
+      - name: last_page_hostname
+        description: The subdomain and domain names of the URL that a user visited last on your website. For example, the hostname of 'www.example.com/contact.html' is 'www.example.com'.
+
+      - name: last_page_referrer
+        description: The last referring URL, which is the user's previous URL and can be your website's domain or other domains.
+
+# SESSIONS DIMENSION TABLE #
   - name: dim_ga4__sessions
     description: '{{ doc("dim_ga4__sessions") }}'
     columns:
       - name: session_key
+        description: A hashed primary key for each session, which is a combination of 'stream_id', 'ga_session_id', and 'user_key'.
         tests:
           - unique
-    
+
+      - name: medium
+        description: The medium that was associated with the start of a session.
+      - name: name
+        description: FIX THIS LATER.
+      - name: source
+        description: The source that was associated with the start of a session.
+
+      - name: ga_session_number
+        description: Identifies the number of sessions that a user has started up to the current session (e.g., a user's third or fifth session on your site).
+
+      - name: landing_page
+        description: The page path and query string associated with the first pageview in a session.
+
+      - name: landing_page_hostname
+        description: The subdomain and domain name of the URL associated with the first pageview in a session. For example, the hostname of 'www.example.com/contact.html' is 'www.example.com'.
+
+      - name: geo
+      - name: continent
+      - name: sub_continent
+      - name: country
+      - name: region
+      - name: city
+
+      - name: device
+      - name: category
+      - name: mobile_brand_name
+      - name: mobile_model_name
+      - name: mobile_marketing_name
+      - name: mobile_os_hardware_model
+      - name: operating_system
+      - name: operating_system_version
+      - name: vendor_id
+      - name: advertising_id
+      - name: language
+      - name: is_limiting_ad_tracking
+      - name: time_zone_offset_seconds
+      - name: web_info
+      - name: browser
+      - name: browser_version
+
+      - name: row_num
+        description: AN aded row number used to identify the first session_start event and to remove theduplicates.
+
+      - name: source
+        description: The source that was associated with the start of a session.
+
+      - name: medium
+        description: The medium that was associated with the start of a session.
+
+      - name: default_channel_grouping
+        description: The default channel grouping that was associated with the start of a session.
+
+# SESSIONS FACT TABLE #
   - name: fct_ga4__sessions
     description: '{{ doc("fct_ga4__sessions") }}'
     columns:
       - name: session_key
+        description: A hashed primary key for each session, which is a combination of 'stream_id', 'ga_session_id', and 'user_key'.
         tests:
           - unique
-  
+
+      - name: user_key
+        description: A hashed primary key for each user, which is based on 'user_id', or' user_pseudo_id' if one doesn't exist.
+
+      - name: session_start_date
+        description: Date of when the session started.
+
+      - name: session_start_timestamp
+        description: Timestamp of when the session started.
+
+      - name: count_page_views
+        description: The number of pages or screens viewed in a session.
+
+      - name: sum_event_value_in_usd
+        description: The sum of all monetary value parameters supplied with an event for a session. You can use this context-sensitive metric to capture data that's important to you (e.g., revenue, time, distance).
+
+      - name: session_engaged
+        description: Whether or not (1 or 0) a session lasted 10 seconds or longer, or had 1 or more conversion events, or 2 or more page or screen views.
+
+# PAGES FACT TABLE #
   - name: fct_ga4__pages
     description: '{{ doc("fct_ga4__pages") }}'
+    columns:
+      - name: event_date
+        description: Date of when the associated page was viewed.
+
+      - name: hour
+        description: Hour of when the associated page was viewed.
+
+      - name: page_location
+        description: The complete URL of the webpage that a user visited on your website. For example, if someone visits www.googlemerchandisestore.com/Bags?theme=1, then the complete URL will populate the dimension.
+
+      - name: page_title
+        description:	The page title that you set on your website.
+
+      - name: page_views
+        description: The number of mobile app screens or web pages a user saw. Repeated views of a single screen or page are counted.
+
+      - name: users
+        description: The number of unique users who triggered a page view.
+
+      - name: new_users
+        description: The number of unique users with 0 previous sessions, who triggered a page view. Users who already have had a session are returning users.
+
+      - name: entrances
+        description: The number of times that the first event recorded for a session occurred on a page or screen.
+
+      - name: exits
+        description: The number of times that the last event recorded for a session occurred on a page or screen.
+
+      - name: total_time_on_page
+        description: The total duration of time each page was viewed.
+
+      - name: scroll_events
+        description: The number of times a user reaches the bottom of each page (i.e., when a 90% vertical depth becomes visible).

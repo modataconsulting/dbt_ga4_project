@@ -23,11 +23,11 @@ This project and any future projects that may be based off of this intial `dbt_g
 | stg_ga4__events | Creates a table with cleaned event data that is enhanced with useful `event_keys` and `session keys`. |
 | stg_ga4__event_* | Creates a table per event that unnests all of the event parameters specific to that event (e.g. `page_view`, `click`, or `scroll`). |
 | stg_ga4__event_items | Creates a table for all items associated with e-commerce events (e.g. `purchase`, `add to cart`, etc.). |
-| stg_ga4__event_to_query_string_params | Creates a table that designates a traffic source via the first `source`, `medium`, `campaign`, and `default_channel_grouping` for each session. |
-| stg_ga4__user_properties | Creates a session-based table for the events that you mark as being a `conversion_event`. |
-| stg_ga4__derived_user_properties | Maps any and all query parameters (e.g. `metric_here`, `and_here`, etc.) that were contained in each event's `page_location`. |
-| stg_ga4__session_conversions | Creates a table that unnests the most recent GA4 `user_properties`, as well as any others  that you mark in `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table. |
-| stg_ga4__sessions_traffic_sources | Creates a table of `derived_user_properties`, which are extracted from the `event_params` specified in the `dbt_project.yml` file,  for the purpose of including them in the final `dim_ga4_users` table. |
+| stg_ga4__sessions_traffic_sources | Creates a table that designates a traffic source via the first `source`, `medium`, `campaign`, and `default_channel_grouping` for each session. |
+| stg_ga4__session_conversions | Creates a session-based table for the events that you mark as being a `conversion_event`. |
+| stg_ga4__event_to_query_string_params | Maps any and all query parameters (e.g. `metric_here`, `and_here`, etc.) that were contained in each event's `page_location`. |
+| stg_ga4__user_properties | Creates a table that unnests the most recent GA4 `user_properties`, as well as any others  that you mark in `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table. |
+| stg_ga4__derived_user_properties | Creates a table of `derived_user_properties`, which are extracted from the `event_params` specified in the `dbt_project.yml` file,  for the purpose of including them in the final `dim_ga4_users` table. |
 
 # Macros
 | Macro Name | Description |

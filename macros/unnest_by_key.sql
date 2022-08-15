@@ -17,16 +17,22 @@
 {%- endmacro -%}
 
 -- REFACTORING MACRO --
-{%- macro unnest_by_key2(column_to_unnest, key_to_extract, value_type = "string") %}
+{%- macro unnest_by_key2(column_to_unnest, key_to_extract) -%}
         
+        {% set value_types = ["string", "int", "float", "double"] %}
+
         (
         SELECT
-            value.{{ value_type }}_value
+            {%- if value_type == "string" %}
+            value.string_value AS value_type
+            {% else %}
+            COALESCE(value.int_value, value.float_value, value.double_value) AS value_type
+            {%- endif %}
         FROM
             UNNEST({{ column_to_unnest }})
         WHERE
             key = '{{ key_to_extract }}'
-        )
+        ) AS {{ key_to_extract }}
 
 {%- endmacro -%}
 
@@ -56,5 +62,3 @@
         {{ value_type }}
     {% endif %}
 {% endfor %}
-
-

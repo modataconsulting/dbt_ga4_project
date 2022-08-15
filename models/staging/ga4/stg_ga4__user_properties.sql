@@ -27,6 +27,7 @@ unnest_user_properties AS (
 
         {% for user_prop in var('user_properties', []) %},
 
+        {{ unnest_by_key('user_properties', user_prop.user_property_name, user_prop.value_type) }}
         -- CHANGE TO MY MACRO --
         {{
             ga4.unnest_key(

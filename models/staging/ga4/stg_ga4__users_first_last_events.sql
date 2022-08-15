@@ -4,8 +4,8 @@ WITH first_last_event AS (
 
     SELECT
         user_key,
-        {{ get_position('FIRST', 'user_key', 'event_key') }} AS first_event,
-        {{ get_position('LAST', 'user_key', 'event_key') }} AS last_event,
+        {{ get_first('user_key', 'event_key') }} AS first_event,
+        {{ get_last('user_key', 'event_key') }} AS last_event,
     FROM
         {{ ref('stg_ga4__events') }}
     WHERE user_key IS NOT NULL --remove users with privacy settings enabled

@@ -16,10 +16,10 @@ WITH page_view_with_params AS (
         {%- for i in range(4) %}
         
         CASE
-            WHEN SPLIT(SPLIT(page_location, '/')[safe_ordinal({{ i+4 }})], '?')[safe_ordinal(1)] = '' THEN NULL
+            WHEN SPLIT(SPLIT(page_location, '/')[SAFE_ORDINAL({{ i+4 }})], '?')[SAFE_ORDINAL(1)] = '' THEN NULL
             ELSE CONCAT(
                 '/',
-                SPLIT(SPLIT(page_location, '/')[safe_ordinal({{ i+4 }})], '?')[safe_ordinal(1)]
+                SPLIT(SPLIT(page_location, '/')[SAFE_ORDINAL({{ i+4 }})], '?')[SAFE_ORDINAL(1)]
             )
         END AS pagepath_level_{{ i+1 }},
         

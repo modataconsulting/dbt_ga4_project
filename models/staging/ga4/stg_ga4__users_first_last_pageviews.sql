@@ -6,8 +6,8 @@ WITH page_views_first_last AS (
         user_key,
 
         -- MAYBE ADD THESE AS VARIABLES FURTHER UP STREAM AS THIS IS DUPLICATED ACCROSS AT LEAST 2 FILES --
-        {{ get_position('FIRST', 'user_key', 'event_key') }} AS first_page_view_event_key,
-        {{ get_position('LAST', 'user_key', 'event_key') }} AS last_page_view_event_key,
+        {{ get_first('user_key', 'event_key') }} AS first_page_view_event_key,
+        {{ get_last('user_key', 'event_key') }} AS last_page_view_event_key,
     FROM
         {{ ref('stg_ga4__event_page_view') }}
     WHERE user_key IS NOT NULL --remove users with privacy settings enabled

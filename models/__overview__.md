@@ -3,7 +3,9 @@
 # dbt GA4 Project
 First and foremost, this project is based off of the dbt [GA4 Package by Velir](https://hub.getdbt.com/velir/ga4/latest), but has been modified and refactored for internal purposes.
 
-This project uses [Google Analytics 4 BigQuery Exports](https://support.google.com/analytics/answer/7029846?hl=en&ref_topic=9359001) as its source data, and offers useful base transformations to provide report-ready dimension & fact models that can be used for reporting purposes, blending with other data, and/or feature engineering for ML models.
+This project uses [Google Analytics 4 BigQuery Exports](https://support.google.com/analytics/topic/9359001) as its source data, and offers useful base transformations to provide report-ready dimension & fact models that can be used for reporting purposes, blending with other data, and/or feature engineering for ML models.
+
+Find more info about Google Analytics 4 BigQuery Exports [here](https://developers.google.com/analytics/bigquery).
 
 ## Style Guide:
 This project and any future projects that may be based off of this intial `dbt_ga4_project`, will be following [This Project's Style Guide...IN PROGRESS](), which borrows ideals from the following Style Guides:
@@ -30,17 +32,23 @@ This project and any future projects that may be based off of this intial `dbt_g
 | stg_ga4__event_to_query_string_params | Maps any and all query parameters (e.g. `metric_here`, `and_here`, etc.) that were contained in each event's `page_location`. |
 | stg_ga4__user_properties | Creates a table that unnests the most recent GA4 `user_properties`, as well as any others  that you mark in `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table. |
 | stg_ga4__derived_user_properties | Creates a table of `derived_user_properties`, which are extracted from the `event_params` specified in the `dbt_project.yml` file,  for the purpose of including them in the final `dim_ga4_users` table. |
+| stg_ga4__page_conversions | [REORDER THIS] ... ADD DESCRIPTION HERE ... |
+| stg_ga4__sessions_first_last_pageviews | [REORDER THIS] ... ADD DESCRIPTION HERE ... |
+| stg_ga4__users_first_last_pageviews | [REORDER THIS] ... ADD DESCRIPTION HERE ... |
+| stg_ga4__users_first_last_events | [REORDER THIS] ... ADD DESCRIPTION HERE ... |
 
 # Macros
 | Macro Name | Description |
 |------------|-------------|
-| default_channel_groupings |  |
-| get_position |  |
-| stage_custom_parameters |  |
-| unnest_by_key |  |
-| extract_hostname_from_url |  |
-| extract_query_string_from_url |  |
-| remove_query_parameters |  |
+| default_channel_groupings | This macro determines the `default_channel_grouping` dimension. |
+| get_position | This macro returns either the `FIRST` or `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`. |
+| get_first | This macro returns the `FIRST` position of a specified `from_column_name`, which is partioned by the `by_column_name`. |
+| get_last | This macro returns  the `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`. |
+| stage_custom_parameters | This macro stages any `custom_parameters` that you specify in the `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table. |
+| unnest_by_key | This macro unnests the specified `key_to_extract` from the `column_to_unnest`. |
+| extract_hostname_from_url | This macro extracts the `hostname` from the `URL`. |
+| extract_query_string_from_url | This macro extracts the `query_parameters` from the `URL`. |
+| remove_query_parameters | This macro will remove any `query_parameters` from the `URL` that you specify in the `dbt_project.yml` file. |
 
 # Seeds
 | Seed File | Description |
@@ -74,7 +82,7 @@ vars:
     start_date: "20210120"
 ```
 
-Find more info about the GA4 obfuscated dataset [here](https://support.google.com/analytics/answer/10937659?hl=en#zippy=%2Cin-this-article). 
+Find more info about the GA4 obfuscated dataset [here](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset). 
 
 ## Optional Variables
 ### Query Parameter Exclusions

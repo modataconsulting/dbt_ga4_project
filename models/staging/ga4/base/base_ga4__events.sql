@@ -97,6 +97,8 @@ renamed as (
         ecommerce,
         items,
 
+        {{ unnest_by_key2('event_params', 'ga_session_id') }},
+        {{ unnest_by_key2('event_params', 'page_location') }},        
         -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
         {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
         {{ unnest_by_key('event_params', 'page_location') }},

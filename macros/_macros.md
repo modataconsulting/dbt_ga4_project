@@ -1,24 +1,3 @@
-USAGE EXAMPLE:
-
--------------------
-
-{% docs macro_name_here %}
-This macro is designed to collect the masking policies of a model or source table.  It can be used for a single table or for an entire resource type.
-
-
-It can take 2 parameters:
-* `resource_type`: the dbt resource type to get he masking policies for. Acceptable values are `source` and `model`
-* `table`: Optional, the name of the dbt object to retrieve the policy information for.
-
-
-Output:
-
-* A list of dictionaries with the elements of a fully qualified column name and the masking policy for that column.
-
-{% enddocs %}
-
--------------------
-
 {% docs default_channel_groupings %}
 
 This macro determines the `default_channel_grouping` dimension based on following: 
@@ -49,6 +28,20 @@ The resulting `default_channel_grouping` will be one of the following:
 {% docs get_position %}
 
 This macro returns either the `FIRST` or `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+
+{% enddocs %}
+
+
+{% docs get_first %}
+
+This macro returns the `FIRST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+
+{% enddocs %}
+
+
+{% docs get_last %}
+
+This macro returns  the `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
 
 {% enddocs %}
 

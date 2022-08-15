@@ -63,7 +63,7 @@ last_value_{{ user_prop.user_property_name }} AS (
 
     SELECT
         user_key,
-        {{ get_position('LAST', 'user_key', '{{ user_prop.user_property_name }}') }} AS {{ user_prop.user_property_name }}
+        {{ get_last('user_key', '{{ user_prop.user_property_name }}') }} AS {{ user_prop.user_property_name }}
     FROM
         non_null_{{ user_prop.user_property_name }}
 

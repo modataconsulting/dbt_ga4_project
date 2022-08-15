@@ -4,8 +4,8 @@ WITH page_views_first_last AS (
 
     SELECT
         session_key,
-        {{ get_position('FIRST', 'session_key', 'event_key') }} AS first_page_view_event_key,
-        {{ get_position('LAST', 'session_key', 'event_key') }} AS last_page_view_event_key
+        {{ get_first('session_key', 'event_key') }} AS first_page_view_event_key,
+        {{ get_last('session_key', 'event_key') }} AS last_page_view_event_key
     FROM
         {{ ref('stg_ga4__events') }}
     WHERE

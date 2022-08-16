@@ -40,7 +40,7 @@ vars:
 
 # TESTING SOME EVENTS:
   event_names: "{% set get_event_names() %}"
-  event_params: "{% set get_event_params() %}"
+  event_params: "{% set get_event_param_value_types() %}"
 
 
 ########################TO DO##############################

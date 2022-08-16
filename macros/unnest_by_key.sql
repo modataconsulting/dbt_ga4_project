@@ -1,20 +1,32 @@
 -- Unnests a single key's value from an array
 
-{%- macro unnest_by_key(column_to_unnest, key_to_extract, value_type = "string", rename_column = "default") %}
-        (SELECT
-            value.{{ value_type }}_value
-        FROM
-            UNNEST({{ column_to_unnest }})
-        WHERE
-            key = '{{ key_to_extract }}'
-        ) AS
+{%- macro unnest_by_key(column_to_unnest, key_to_extract, value_type = "string") -%}
 
-        {%- if rename_column == "default" %}
-            {{ key_to_extract }}
-        {%- else %}
-            {{ rename_column }}
-        {%- endif -%}
+        (
+            SELECT
+                value.{{ value_type }}_value
+            FROM
+                UNNEST({{ column_to_unnest }})
+            WHERE
+                key = '{{ key_to_extract }}'
+        ) AS {{ key_to_extract }}
+
 {%- endmacro -%}
+
+
+{%- macro unnest_by_key_alt(column_to_unnest, key_to_extract, value_type = "string") -%}
+
+        (
+            SELECT
+                value.{{ value_type }}_value
+            FROM
+                UNNEST({{ column_to_unnest }})
+            WHERE
+                key = '{{ key_to_extract }}'
+        )
+
+{%- endmacro -%}
+
 
 -- REFACTORING MACRO --
 {%- macro unnest_by_key2(column_to_unnest, key_to_extract) -%}

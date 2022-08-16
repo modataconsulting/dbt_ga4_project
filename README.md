@@ -188,3 +188,4 @@ vars:
   - [Stacktonic dbt Example Project](https://github.com/stacktonic-com/stacktonic-dbt-example-project)
   - Also inspired by [this](https://github.com/llooker/ga_four_block_dev/blob/master/views/sessions.view.lkml)
 - [SQL Formatter](https://smalldev.tools/sql-formatter-online)
+- [Intro To GA4 in BQ](https://www.ga4bigquery.com/introduction-to-google-analytics-4-ga4-export-data-in-bigquery/)

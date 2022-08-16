@@ -96,21 +96,14 @@ renamed as (
         platform,
         ecommerce,
         items,
-
-        {{ unnest_by_key2('event_params', 'ga_session_id') }},
-        {{ unnest_by_key2('event_params', 'page_location') }},        
+     
         -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
         {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
         {{ unnest_by_key('event_params', 'page_location') }},
         {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
-        
-        -- REFACTOR THIS & THE MACRO TO NOT INCLUDE AS TO FIX THIS REOCCURING ISSUE --
-        -- CASE
-        --     WHEN (SELECT value.string_value FROM UNNEST(event_params) WHERE key = 'session_engaged') = '1' THEN 1
-        -- END AS session_engaged,
 
         -- TRY USING THIS INSTEAD --
-        IF({{ unnest_by_key2('event_params', 'session_engaged') }} = '1', 1, NULL) AS session_engaged, -- USE NULL OR 0? --
+        IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, NULL) AS session_engaged, -- USE NULL OR 0? --
         
         {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
         {{ unnest_by_key('event_params', 'page_title') }},

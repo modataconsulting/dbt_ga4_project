@@ -39,9 +39,8 @@ vars:
   start_date: "20210120" ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
 # TESTING SOME EVENTS:
-  event_names: "{% set get_event_names() %}"
-  event_params: "{% set get_event_param_value_types() %}"
-
+  excluded_event_names: []
+  excluded_event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event']
 
 ########################TO DO##############################
 # Query parameter exclusions

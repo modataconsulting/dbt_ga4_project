@@ -76,7 +76,7 @@ renamed as (
     SELECT 
         event_date,
         event_timestamp,
-        LOWER(REPLACE(TRIM(event_name), ' ', '_')) AS event_name, -- Clean up all event names to be snake cased
+        LOWER(REPLACE(TRIM(event_name), ' ', '_')) AS event_name, -- Ensure all event names are snake_cased.
         event_params,
         event_previous_timestamp,
         event_value_in_usd,
@@ -95,26 +95,9 @@ renamed as (
         stream_id,
         platform,
         ecommerce,
-        items,
-     
-        -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
-        {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
-        {{ unnest_by_key('event_params', 'page_location') }},
-        {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
-
-        -- TRY USING THIS INSTEAD --
-        IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, NULL) AS session_engaged, -- USE NULL OR 0? --
-        
-        {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
-        {{ unnest_by_key('event_params', 'page_title') }},
-        {{ unnest_by_key('event_params', 'page_referrer') }},
-        {{ unnest_by_key('event_params', 'source') }},
-        {{ unnest_by_key('event_params', 'medium') }},
-        {{ unnest_by_key('event_params', 'campaign') }},
-
-        IF(event_name = 'page_view', 1, 0) AS is_page_view,
-        IF(event_name = 'purchase', 1, 0) AS is_purchase
-    FROM source
+        items
+    FROM
+        source
 
 )
 

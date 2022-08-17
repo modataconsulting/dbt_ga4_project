@@ -11,7 +11,7 @@ This project and any future projects that may be based off of this intial `dbt_g
 - [GitLab's SQL Style Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide)
 
 # Models
-![DAG Overview](images/DAG.png)
+![DAG Overview](assets/DAG.png)
 ## Core Models
 | Model Name | Description |
 |------------|-------------|

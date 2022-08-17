@@ -1,6 +1,6 @@
 -- This staging model contains key creation and window functions. Keeping window functions outside of the base incremental model ensures that the incremental updates don't artificially limit the window partition sizes (ex: if a session spans 2 days, but only 1 day is in the incremental update)
 
-WITH base_events AS (
+WITH joined_base_events AS (
 
     SELECT
         *
@@ -16,6 +16,105 @@ WITH base_events AS (
 
 ),
 
+-- I WANT EXPLICITLY LIST ALL BASE EVENTS INTIALLY FOR DOWNSTREAM INTERPREBILLITY AND UNNEST THEM TO WIDE & DENOMALIZED --
+-- UNNEST ALL DEFAULT EVENTS --
+base_events AS (
+
+    SELECT
+        *,
+        
+        -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
+        {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
+        {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
+        IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, 0) AS session_engaged,
+        {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
+        {{ unnest_by_key('event_params', 'page_location') }},
+        {{ unnest_by_key('event_params', 'page_title') }},
+        {{ unnest_by_key('event_params', 'page_referrer') }},
+        {{ unnest_by_key('event_params', 'source') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
+        {{ unnest_by_key('event_params', 'medium') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
+        {{ unnest_by_key('event_params', 'campaign') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
+        IF(event_name = 'page_view', 1, 0) AS is_page_view,
+        IF(event_name = 'purchase', 1, 0) AS is_purchase
+    FROM
+        joined_base_events
+
+),
+
+-- TODO: UNNEST ALL OTHER DEFAULT REPEATED FIELDS HERE --
+---------------------------------------------------------
+
+-- INCLUDE 'privacy_info' RECORD FIELD HERE? --
+
+-- REPEATED FIELD: INCLUDE 'user_properties' RECORD FIELD HERE? --
+
+-- INCLUDE 'user_ltv' RECORD FIELD HERE? --
+
+device AS (
+
+    SELECT
+        *,
+
+        device.category                 AS category, -- RENAME TO 'device_cateogry' or 'device_type' INSTEAD? --
+        device.mobile_brand_name        AS mobile_brand_name,
+        device.mobile_model_name        AS mobile_model_name,
+        device.mobile_marketing_name    AS mobile_marketing_name,
+        device.mobile_os_hardware_model AS mobile_os_hardware_model,
+        device.operating_system         AS operating_system,
+        device.operating_system_version AS operating_system_version,
+        device.vendor_id                AS vendor_id,
+        device.advertising_id           AS advertising_id,
+        device.language                 AS language,
+        device.is_limited_ad_tracking   AS is_limited_ad_tracking,
+        device.time_zone_offset_seconds AS time_zone_offset_seconds,
+        device.web_info.browser         AS browser,
+        device.web_info.browser_version AS browser_version
+    FROM
+        base_events
+
+),
+
+geo AS (
+
+    SELECT
+        *,
+
+        geo.continent     AS continent,
+        geo.sub_continent AS sub_continent,
+        geo.country       AS country,
+        geo.region        AS region,
+        geo.city          AS city,
+        geo.metro         AS metro
+    FROM
+        device
+
+),
+
+-- INCLUDE 'app_info' RECORD FIELD HERE? --
+
+-- SEEING SOME DISCREPANCIES BETWEEN THIS AND MANUALLY PULLING FROM EVENT PARAMS --
+-- USING 'test_' PREFIX IN MEANTIME TO DIFFERENTIATE --
+traffic_source AS (
+
+    SELECT
+        *,
+
+        traffic_source.medium AS test_medium,
+        traffic_source.name   AS test_name, -- CHANGE TO 'campaign_name' INSTEAD? --
+        traffic_source.source AS test_source
+    FROM
+        geo
+
+),
+
+-- INCLUDE 'event_dimensions' RECORD FIELD HERE? --
+
+-- INCLUDE 'eccommerce' RECORD FIELD HERE? --
+
+-- REPEATED FIELD: INCLUDE 'items' RECORD FIELD HERE? --
+
+---------------------------------------------------------
+
 -- Add a unique key for the user that checks for user_id and then pseudo_user_id.
 add_user_key AS (
 
@@ -27,7 +126,7 @@ add_user_key AS (
             ELSE NULL -- this case is reached when privacy settings are enabled
         END AS user_key
     FROM
-        base_events
+        traffic_source
 
 ),
 
@@ -112,5 +211,7 @@ enrich_params AS (
         remove_query_params
 
 )
+
+-- TODO: ADD THE DYNAMIC UNNESTING OF EVENT PARAMS HERE --
 
 SELECT * FROM enrich_params

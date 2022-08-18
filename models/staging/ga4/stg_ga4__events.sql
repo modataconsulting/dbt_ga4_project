@@ -16,9 +16,9 @@ WITH joined_base_events AS (
 
 ),
 
--- I WANT EXPLICITLY LIST ALL BASE EVENTS INTIALLY FOR DOWNSTREAM INTERPREBILLITY AND UNNEST THEM TO WIDE & DENOMALIZED --
+-- I WANT EXPLICITLY LIST ALL BASE EVENTS INTIALLY FOR DOWNSTREAM INTERPREBILLITY AND UNNEST THEM TO BE WIDE & DENOMALIZED --
 -- UNNEST ALL DEFAULT EVENTS --
-base_events AS (
+unnest_default_event_params AS (
 
     SELECT
         *,
@@ -34,8 +34,8 @@ base_events AS (
         {{ unnest_by_key('event_params', 'source') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
         {{ unnest_by_key('event_params', 'medium') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
         {{ unnest_by_key('event_params', 'campaign') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
-        IF(event_name = 'page_view', 1, 0) AS is_page_view,
-        IF(event_name = 'purchase', 1, 0) AS is_purchase
+        IF(event_name = 'page_view', 1, 0) AS is_page_view, -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
+        IF(event_name = 'purchase', 1, 0) AS is_purchase -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
     FROM
         joined_base_events
 
@@ -50,7 +50,7 @@ base_events AS (
 
 -- INCLUDE 'user_ltv' RECORD FIELD HERE? --
 
-device AS (
+unnest_device AS (
 
     SELECT
         *,
@@ -70,11 +70,11 @@ device AS (
         device.web_info.browser         AS browser,
         device.web_info.browser_version AS browser_version
     FROM
-        base_events
+        unnest_default_event_params
 
 ),
 
-geo AS (
+unnest_geo AS (
 
     SELECT
         *,
@@ -86,7 +86,7 @@ geo AS (
         geo.city          AS city,
         geo.metro         AS metro
     FROM
-        device
+        unnest_device
 
 ),
 
@@ -94,7 +94,7 @@ geo AS (
 
 -- SEEING SOME DISCREPANCIES BETWEEN THIS AND MANUALLY PULLING FROM EVENT PARAMS --
 -- USING 'test_' PREFIX IN MEANTIME TO DIFFERENTIATE --
-traffic_source AS (
+unnest_traffic_source AS (
 
     SELECT
         *,
@@ -103,7 +103,7 @@ traffic_source AS (
         traffic_source.name   AS test_name, -- CHANGE TO 'campaign_name' INSTEAD? --
         traffic_source.source AS test_source
     FROM
-        geo
+        unnest_geo
 
 ),
 
@@ -126,7 +126,7 @@ add_user_key AS (
             ELSE NULL -- this case is reached when privacy settings are enabled
         END AS user_key
     FROM
-        traffic_source
+        unnest_traffic_source
 
 ),
 

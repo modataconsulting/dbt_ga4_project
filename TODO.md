@@ -43,7 +43,25 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 - [ ] `USER-SCOPE` Metrics:
 	- [ ] `days_active` = `COUNT(DISTINCT event_date) AS day_count`: The number of days a user has been active on your website or application.
 	- [ ] ?`event_count`? = `COUNT(*[events]) AS event_count`: The total number of a events a user has triggered on your webiste or application.
-
+	- [ ] Event-related:
+		- [ ] `avg_events_per_session`
+		- [ ] `lifetime_events`
+	- [ ] Pageview-related:
+		- [ ] `avg_page_views_per_session`
+		- [ ] `avg_page_view_duration`
+	- [ ] Session-related:
+		- [ ] `avg_session_duration`
+		- [ ] `lifetime_duration`
+- [ ] `SESSION-SCOPE` Metrics:
+	- [ ] Event-related:
+		- [ ] `avg_events_per_session`
+		- [ ] `lifetime_events`
+	- [ ] Pageview-related:
+		- [ ] `avg_page_view_duration`
+- [ ] `PAGE-SCOPE` Metrics:
+	- [ ] Event-related:
+		- [ ] `events_per_page`
+	- [ ] ``
 - [ ] IN GENERAL CONSIDER ADDING THESE FOR EACH METRIC WHERE APPLICABLE:
 	- [ ] `avg_[entity]`
 	- [ ] `total_[entity]`

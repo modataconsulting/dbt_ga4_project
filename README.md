@@ -1,3 +1,5 @@
+**NOTE: This project is still very much a work in progress, with much of the larger model restructering still to come...**
+
 # dbt GA4 Project
 First and foremost, this project is based off of the dbt [GA4 Package by Velir](https://hub.getdbt.com/velir/ga4/latest), but has been modified and refactored for internal purposes.
 
@@ -11,6 +13,7 @@ This project and any future projects that may be based off of this intial `dbt_g
 - [GitLab's SQL Style Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide)
 
 # Models
+***DAG Overview***
 ![DAG Overview](assets/DAG.png)
 ## Core Models
 | Model Name | Description |
@@ -60,9 +63,7 @@ Make sure to run `dbt seed` before running `dbt run`.
 ## Setup
 
 ## Required Variables
-
 This package assumes that you have an existing DBT project with a BigQuery profile and a BigQuery GCP instance available with GA4 event data loaded. Source data is located using the following variables which must be set in your `dbt_project.yml` file.
-
 ```
 vars:
     ga4:
@@ -73,76 +74,42 @@ vars:
 ```
 
 If you don't have any GA4 data of your own, you can connect to Google's public data set with the following settings:
-
 ```
 vars:
     project: "bigquery-public-data"
     dataset: "ga4_obfuscated_sample_ecommerce"
     start_date: "20210120"
 ```
-
 Find more info about the GA4 obfuscated dataset [here](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset). 
 
 ## Optional Variables
 ### Query Parameter Exclusions
-
 Setting any `query_parameter_exclusions` will remove query string parameters from the `page_location` field for all downstream processing. Original parameters are captured in a new `original_page_location` field. Ex:
-
 ```
 vars:
   ga4: 
     query_parameter_exclusions: ["gclid","fbclid","_ga"] 
 ```
-### Custom Parameters
 
-Within GA4, you can add custom parameters to any event. These custom parameters will be picked up by this package if they are defined as variables within your `dbt_project.yml` file using the following syntax:
-
-```
-[event name]_custom_parameters
-  - name: "[name of custom parameter]"
-    value_type: "[string_value|int_value|float_value|double_value]"
-```
-
-For example: 
-
+### Conversion Events
+Specific event names can be specified as conversions by setting the `conversion_events` variable in your `dbt_project.yml` file. These events will be counted against each session and included in the `fct_sessions.sql` dimensional model. Ex:
 ```
 vars:
   ga4:
-    page_view_custom_parameters:
-          - name: "clean_event"
-            value_type: "string_value"
-          - name: "country_code"
-            value_type: "int_value"
-```
-### User Properties
-
-User properties are provided by GA4 in the `user_properties` repeated field. The most recent user property for each user will be extracted and included in the `dim_ga4__users` model by configuring the `user_properties` variable in your project as follows:
-
-```
-vars:
-  ga4:
-    user_properties:
-      - user_property_name: "membership_level"
-        value_type: "int_value"
-      - user_property_name: "account_status"
-        value_type: "string_value"
+      conversion_events:['purchase','download']
 ```
 
-### Derived User Properties
-
+### Derived User Properties [TO HANDLE DIFFERENTLY]
 Derived user properties are different from "User Properties" in that they are derived from event parameters. This provides additional flexibility in allowing users to turn any event parameter into a user property. 
 
 Derived User Properties are included in the `dim_ga4__users` model and contain the latest event parameter value per user. 
-
 ```
 derived_user_properties:
   - event_parameter: "[your event parameter]"
     user_property_name: "[a unique name for the derived user property]"
     value_type: "[string_value|int_value|float_value|double_value]"
 ```
-
 For example: 
-
 ```
 vars:
   ga4:
@@ -154,19 +121,39 @@ vars:
           user_property_name: "most_recent_param"  
           value_type: "string_value"
 ```
-### GA4 Recommended Events
 
-See the README file at /dbt_packages/models/staging/ga4/recommended_events for instructions on enabling [Google's recommended events](https://support.google.com/analytics/answer/9267735?hl=en).
-
-### Conversion Events
-
-Specific event names can be specified as conversions by setting the `conversion_events` variable in your `dbt_project.yml` file. These events will be counted against each session and included in the `fct_sessions.sql` dimensional model. Ex:
-
+### Custom Parameters [TO REMOVE]
+Within GA4, you can add custom parameters to any event. These custom parameters will be picked up by this package if they are defined as variables within your `dbt_project.yml` file using the following syntax:
+```
+[event name]_custom_parameters
+  - name: "[name of custom parameter]"
+    value_type: "[string_value|int_value|float_value|double_value]"
+```
+For example: 
 ```
 vars:
   ga4:
-      conversion_events:['purchase','download']
+    page_view_custom_parameters:
+          - name: "clean_event"
+            value_type: "string_value"
+          - name: "country_code"
+            value_type: "int_value"
 ```
+
+### User Properties [TO REMOVE]
+User properties are provided by GA4 in the `user_properties` repeated field. The most recent user property for each user will be extracted and included in the `dim_ga4__users` model by configuring the `user_properties` variable in your project as follows:
+```
+vars:
+  ga4:
+    user_properties:
+      - user_property_name: "membership_level"
+        value_type: "int_value"
+      - user_property_name: "account_status"
+        value_type: "string_value"
+```
+
+### GA4 Recommended Events [TO REMOVE]
+See the README file at /dbt_packages/models/staging/ga4/recommended_events for instructions on enabling [Google's recommended events](https://support.google.com/analytics/answer/9267735?hl=en).
 
 ## Resources:
 - GA4 Resources:

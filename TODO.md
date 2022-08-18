@@ -2,13 +2,13 @@
 ## Low LOE
 ### Adding & Fixing Docs:
 - [ ] Docs to Add:
-	- [ ] Add a singular `_metric_definitions.md` file to root of the `models` folder. See [here](https://gitlab.com/gitlab-data/analytics/-/tree/master/transform/snowflake-dbt/models) for inspo.
+	- [x] Add a singular `_metric_definitions.md` file to root of the `models` folder. See [here](https://gitlab.com/gitlab-data/analytics/-/tree/master/transform/snowflake-dbt/models) for inspo.
 		- [ ] Essentially each metric definition would be in this format: `{% docs %} <Enter your metric definition here, like this. [Source](https://like-to-source-file.here/)> {% enddocs %}`
-	- [ ] 
+		- [ ] Need to update as metrics & dimensions are added, removed, or changed.
 - [ ] Docs to Fix:
 	- [ ] Change `__overview__.md` to simply be a high-level overview with links to say the `README.md`, `Projet Style Guide`, and the `whatever else here` for the project.
 		- [ ] See [here](https://gitlab.com/gitlab-data/analytics/-/blob/master/transform/snowflake-dbt/models/overview.md) for inspo.
-	- [ ] 
+
 ### Metric & Dimension Renaming:
 The general Fixes are as follows:
 ```
@@ -18,18 +18,24 @@ total_[entity] OR
 
 // EX: num_page_views --> page_views
 ```
-- [ ] `dim_ga4__users` table:
-	- [ ] `num_sessions` --> `sessions`
-	- [ ] `num_page_views` --> `pages_views`
-	- [ ] `num_purchases` --> `purchases`
+- [x] `dim_ga4__users` table:
+	- [x] `num_sessions` --> `sessions`
+	- [x] `num_page_views` --> `pages_views`
+	- [x] `num_purchases` --> `purchases`
 - [x] `dim_ga4__sessions` table:
 - [ ] `fct_ga4__pages` table:
-	- [ ]  Consider if we should handle `hour` differently?
-	- [ ] `total_time_on_page` --> `time_on_page`
+	- [ ] Consider if we should handle `hour` differently?
+	- [x] `total_time_on_page` --> `time_on_page`
 - [ ] `fct_ga4__sessions` table:
-	- [ ] `count_page_views` --> `page_views`
+	- [x] `count_page_views` --> `page_views`
 	- [ ] Consider changing `sum_event_value_in_usd` --> `event_value`, will want to allign with UA/Internal usage.
-	- [ ] `session_engaged` --> `engaged_session`?
+	- [ ] `session_engaged` --> `engaged_sessions`?
+
+### Macro Changes:
+- [ ] Consider using the following `dbt.utils` in place of the current url-related macros:
+	- [ ] [Web Macros](https://github.com/dbt-labs/dbt-utils/blob/main/README.md#web-macros)
+- [ ] Consider recoupling the `extract_hostname_from_url` & `extract_query_string_from_url` into a singular `parse_url()` macro --> parse_url([hostname|query]):
+	- [ ] Checks for `remove_query_parameters` automatically & simpler than having multiple macros with specific names.
 
 ## Medium LOE
 ### Mart Table Restructuring:
@@ -37,6 +43,7 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 - [ ] `dim_ga4__sessions` & `fct_ga4__sessions` --> `ga4__sessions`
 - [ ] `dim_ga4__users` --> `ga4__users`
 - [ ] `fct_ga4__pages` --> `ga4__pages`
+- [ ] ALSO, HONESTLY SHOULD INCLUDE AN ENRICHED & UNNESTED `ga4__events` TABLE AS WELL.
 
 ### Adding Metrics & Dimensions:
 #### Individual Metrics:
@@ -51,7 +58,7 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 		- [ ] `avg_page_view_duration`
 	- [ ] Session-related:
 		- [ ] `avg_session_duration`
-		- [ ] `lifetime_duration`
+		- [ ] `lifetime_session_duration` **SEE BELOW IN `User Lifetime Metrics`.**
 - [ ] `SESSION-SCOPE` Metrics:
 	- [ ] Event-related:
 		- [ ] `avg_events_per_session`
@@ -59,9 +66,11 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 	- [ ] Pageview-related:
 		- [ ] `avg_page_view_duration`
 - [ ] `PAGE-SCOPE` Metrics:
+	- [ ] Expand on [Entrances & Exits](https://support.google.com/analytics/answer/11080047?hl=en&ref_topic=11151952):
+		- [ ] `entrance_rate`: The percentage of sessions that started on a page or screen (`Entrances` / `Sessions`).
+		- [ ] `exit_rate`: The percentage of sessions that ended on a page or screen (`Exits` / `Sessions`).
 	- [ ] Event-related:
 		- [ ] `events_per_page`
-	- [ ] ``
 - [ ] IN GENERAL CONSIDER ADDING THESE FOR EACH METRIC WHERE APPLICABLE:
 	- [ ] `avg_[entity]`
 	- [ ] `total_[entity]`
@@ -75,13 +84,13 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 	- [ ] `lifetime_session_duration`: The total duration of user sessions, from their first session until the current session expires, including time when your website or application is in the background.
 	- [ ] `lifetime_ad_revenue`: The ad revenue you generate from someone since their first visit to your website or app.
 	- [ ] `LTV` or `lifetime_value`: Lifetime value (LTV) shows the total revenue from purchases on your website or application. You can use the data to determine how valuable users are based on additional revenue you generate.
-	- [ ] `lifetime_sessions`: ALREADY HAVE THIS - `sessions` @ User Level
-	- [ ] `lifetime_transactions` ALREADY HAVE THIS - `purchases` @ User Level
+	- [x] `lifetime_sessions`: **ALREADY HAVE THIS - `sessions` @ User Level**
+	- [x] `lifetime_transactions` **ALREADY HAVE THIS - `purchases` @ User Level**
 - [ ] ...WAY MORE...
 
 ## High LOE
 ### Creating A Dynamic Macro To Handle All Events:
-REASONING: 
+REASONING: This will help the setup / configuartion to be almost instant. Where every event_name in the `stg_ga4_events` model will be automatically detected and create subsequent models for them.
 CURRENT PROGRESS: **I am so close, but no cigar yet.** I have almost figured out how to dynamically handle all `event_params` and their assosiated `value.<dtype>_type` through macros, one solved, I can implement it to build one enormous Staging Model for all non statically handled events.
 - [ ] 
 
@@ -101,18 +110,54 @@ REASONING: Currently there is only a Staging and Mart Models, and no Intermediat
 - [ ] Handling all `event_*` related models:
 	- [ ] FIX `stg_ga4__event_page_view`, it is trying to join with something up stream.
 
+### Add Tests & Packages:
+- [ ] Testing Packages to use:
+	- [ ] [dbt_utils](https://hub.getdbt.com/dbt-labs/dbt_utils/0.1.7/)
+	- [ ] [dbt_expectations](https://hub.getdbt.com/calogica/dbt_expectations/0.1.2/)
+	- [ ] [dbt_audit_help](https://github.com/dbt-labs/dbt-audit-helper)
+
+### Transition from `dbt Cloud` --> `dbt Core`:
+- [ ] A LOT TO DO FOR THIS...
+
+### Add Integration Tests:
+- [ ] See the [dbt-ga4 Integration Tests](https://github.com/Velir/dbt-ga4/tree/main/integration_tests) for examples.
+	- [ ] See also dbt's docs for [testing a new adapter](https://docs.getdbt.com/docs/contributing/testing-a-new-adapter).
+
 ## Other General Issues:
 - [ ] Decide on considerations for handling certain `event_params`, such as: 
 	- [ ] Google click-related: `gclsrc` and `gclid`.
 		- [ ] See [here](https://support.google.com/searchads/answer/7342044) for more info.
 	- [ ] Others like: `debug_mode`, `term`, and ?`clean_event`.
 
-
 # COMPLETED
-- [x]
-
+- [x] Models:
+	- [x]
+- [x] Macros:
+	- [x] `get_position`
+		- [x] `get_first`
+		- [x] `get_last`
+	- [x]
+- [x] Metrics:
+	- [x]
+- [x] Docs:
+	- [x]
 
 # OTHER CONSIDERATIONS & IDEAS
+- IDEALS FOR WHY I AM MAKING SOME OF MY CHOICES REVOLVE AROUND: IMPLICIT VS EXPLICIT
+	- TO WRITE ON THIS EXTENSIVELY ONCE PROJECT IS MORE MATURE...
+- See this [Stack Overflow Comment](https://stackoverflow.com/questions/64007239/hi-how-do-we-define-select-statement-as-a-variable-in-dbt), as this may be a better way to implement the `unest_params` macro:
+	- See also dbt's [Statement Blocks](https://docs.getdbt.com/reference/dbt-jinja-functions/statement-blocks).
+```
+{%- call statement('my_statement', fetch_result=True) -%}
+      SELECT my_field FROM my_table
+{%- endcall -%}
+
+{%- set my_var = load_result('my_statement')['data'][0][0] -%}
+```
+- Consider adding some Metrics / Dimensions for `User-Scoped` illustrating their `most_freq` & `unique_num_of` for the following:
+	- `device` & `device_category`, etc.
+	- `location`
+	- SURE SOME OTHER GREAT ONES, WILL BRAINSTORM / WHITESTORM WITH OTEHRS.
 - CHECK THIS RESOURCE OUT: [Data Modeling for a Customer 360 View](https://docs.getdbt.com/blog/customer-360-view-identity-resolution#step-3-model-the-gaggle).
 - Monitoring [Core Web Vitals in BigQuery](https://web.dev/vitals-ga4/).
 - [Churn Prediction Using GA4 and BQML](https://cloud.google.com/blog/topics/developers-practitioners/churn-prediction-game-developers-using-google-analytics-4-ga4-and-bigquery-ml).

@@ -18,7 +18,7 @@ WITH page_view AS (
         SUM(IF(ga_session_number = 1, 1, 0)) AS new_users,
         SUM(entrances) AS entrances,
         SUM(exits) AS exits,
-        SUM(engagement_time_msec) AS total_time_on_page
+        SUM(engagement_time_msec) AS time_on_page
     FROM
         {{ ref('stg_ga4__event_page_view') }}
     GROUP BY

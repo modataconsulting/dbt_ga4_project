@@ -8,9 +8,9 @@ WITH users AS (
         MIN(event_date) AS first_seen_date,
         MAX(event_timestamp) AS last_seen_timestamp,
         MAX(event_date) AS last_seen_date,
-        COUNT(DISTINCT session_key) AS num_sessions,
-        SUM(is_page_view) AS num_page_views,
-        SUM(is_purchase) AS num_purchases
+        COUNT(DISTINCT session_key) AS sessions,
+        SUM(is_page_view) AS page_views,
+        SUM(is_purchase) AS purchases
     FROM
         {{ ref('stg_ga4__events') }}
     WHERE user_key IS NOT NULL -- Remove users with privacy settings enabled.

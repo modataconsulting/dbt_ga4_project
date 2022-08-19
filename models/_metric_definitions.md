@@ -94,7 +94,7 @@
 
 {% docs session_start_timestamp %} Timestamp of when the session started. {% enddocs %}
 
-{% docs sum_event_value_in_usd %} The sum of all monetary value parameters supplied with an event for a session. You can use this context-sensitive metric to capture data that's important to you (e.g. `revenue`, `time`, `distance`). {% enddocs %}
+{% docs sum_event_value %} The sum of all monetary value parameters supplied with an event for a session. You can use this context-sensitive metric to capture data that's important to you (e.g. `revenue`, `time`, `distance`). {% enddocs %}
 
 {% docs session_engaged %} Whether or not (1 or 0) a session lasted 10 seconds or longer, or had 1 or more conversion events, or 2 or more page or screen views. {% enddocs %}
 
@@ -117,3 +117,73 @@
 {% docs time_on_page %} The total duration of time each page was viewed. {% enddocs %}
 
 {% docs scroll_events %} The number of times a user reaches the bottom of each page (i.e., when a 90% vertical depth becomes visible). {% enddocs %}
+
+{% docs event_key %} A hashed primary key for each event, which is a combination of `event_number`, `session_key`, and `user_key`. {% enddocs %}
+
+{% docs event_timestamp %} Timestamp of when the associated event was viewed. {% enddocs %}
+
+{% docs event_name %} The name of the event. {% enddocs %}
+
+{% docs event_previous_timestamp %} The time (in microseconds, UTC) at which the event was previously logged on the client. {% enddocs %}
+
+{% docs event_value %} The currency-converted value (in USD) of the event's "value" parameter. {% enddocs %}
+
+{% docs event_bundle_sequence_id %} The sequential ID of the bundle in which these events were uploaded. {% enddocs %}
+
+{% docs event_server_timestamp_offset %} Timestamp offset between collection time and upload time in micros. {% enddocs %}
+
+{% docs page_referrer %} The first referring URL, which is the user's previous URL and can be your website's domain or other domains. {% enddocs %}
+
+{% docs item_id %} The ID of the item. {% enddocs %}
+
+{% docs item_name %} The name of the item. {% enddocs %}
+
+{% docs item_brand %} The brand of the item. {% enddocs %}
+
+{% docs item_variant %} The variant of the item. {% enddocs %}
+
+{% docs item_category %} The category of the item. {% enddocs %}
+
+{% docs item_category2 %} The sub category of the item. {% enddocs %}
+
+{% docs item_category3 %} The sub category of the item. {% enddocs %}
+
+{% docs item_category4 %} The sub category of the item. {% enddocs %}
+
+{% docs item_category5 %} The sub category of the item. {% enddocs %}
+
+{% docs price_in_usd %} The price of the item, in USD with standard unit. {% enddocs %}
+
+{% docs price %} The price of the item in local currency. {% enddocs %}
+
+{% docs quantity %} The quantity of the item. {% enddocs %}
+
+{% docs item_revenue_in_usd %} The revenue of this item, calculated as price_in_usd * quantity. It is populated for purchase events only, in USD with standard unit. {% enddocs %}
+
+{% docs item_revenue %} The revenue of this item, calculated as price * quantity. It is populated for purchase events only, in local currency with standard unit. {% enddocs %}
+
+{% docs item_refund_in_usd %} The refund value of this item, calculated as price_in_usd * quantity. It is populated for refund events only, in USD with standard unit. {% enddocs %}
+
+{% docs item_refund %} The refund value of this item, calculated as price * quantity. It is populated for refund events only, in local currency with standard unit. {% enddocs %}
+
+{% docs coupon %} Coupon code applied to this item. {% enddocs %}
+
+{% docs affiliation %} A product affiliation to designate a supplying company or brick and mortar store location. {% enddocs %}
+
+{% docs location_id %} The location associated with the item. {% enddocs %}
+
+{% docs item_list_id %} The ID of the list in which the item was presented to the user. {% enddocs %}
+
+{% docs item_list_name %} The name of the list in which the item was presented to the user. {% enddocs %}
+
+{% docs item_list_index %} The position of the item in a list. {% enddocs %}
+
+{% docs promotion_id %} The ID of a product promotion. {% enddocs %}
+
+{% docs promotion_name %} The name of a product promotion. {% enddocs %}
+
+{% docs creative_name %} The name of a creative used in a promotional spot. {% enddocs %}
+
+{% docs creative_slot %} The name of a creative slot. {% enddocs %}
+
+{% docs  %}  {% enddocs %}

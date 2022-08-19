@@ -29,7 +29,7 @@ total_[entity] OR
 	- [x] `total_time_on_page` --> `time_on_page`
 - [ ] `fct_ga4__sessions` table:
 	- [x] `count_page_views` --> `page_views`
-	- [ ] Consider changing `sum_event_value_in_usd` --> `event_value`, will want to allign with UA/Internal usage.
+	- [x] Consider changing `sum_event_value_in_usd` --> `event_value`, will want to allign with UA/Internal usage.
 	- [ ] `session_engaged` --> `engaged_sessions`?
 
 ### Macro Changes:
@@ -44,7 +44,7 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 - [ ] `dim_ga4__sessions` & `fct_ga4__sessions` --> `ga4__sessions`
 - [ ] `dim_ga4__users` --> `ga4__users`
 - [ ] `fct_ga4__pages` --> `ga4__pages`
-- [ ] ALSO, HONESTLY SHOULD INCLUDE AN ENRICHED & UNNESTED `ga4__events` TABLE AS WELL.
+- [x] ALSO, HONESTLY SHOULD INCLUDE AN ENRICHED & UNNESTED `ga4__events` TABLE AS WELL.
 
 ### Adding Metrics & Dimensions:
 #### Individual Metrics:
@@ -88,6 +88,7 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 	- [x] `lifetime_sessions`: **ALREADY HAVE THIS - `sessions` @ User Level**
 	- [x] `lifetime_transactions` **ALREADY HAVE THIS - `purchases` @ User Level**
 - [ ] ...WAY MORE...
+- [ ] See [Automatically Collected Events in GA4](https://support.google.com/firebase/answer/9234069?hl=en).
 
 ## High LOE
 ### Creating A Dynamic Macro To Handle All Events:

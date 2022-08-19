@@ -3,12 +3,14 @@ WITH events AS (
     SELECT
         *
     EXCEPT (
+        event_params,
         privacy_info,
         user_properties, 
         user_ltv, 
         device, 
         geo, 
-        app_info,  
+        app_info,
+        traffic_source,
         ecommerce, 
         items
     )

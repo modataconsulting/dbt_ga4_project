@@ -24,3 +24,10 @@ This is the Fact Table for page-related Metrics, such as `page_views`, `exits`, 
 This is the fact table for session-level metrics, such as `sessions_engaged`, `engagement_time`, and `page_views`. This table is grouped by both `session_key` and `user_key`.
 
 {% enddocs %}
+
+
+{% docs ga4__events %}
+
+This is the table for event-level metrics & dimensions. TO ADD A BETTER DESCRIPTION.
+
+{% enddocs %}

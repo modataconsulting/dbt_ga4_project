@@ -58,7 +58,7 @@ renamed as (
         LOWER(REPLACE(TRIM(event_name), ' ', '_')) AS event_name, -- Ensure all event names are snake_cased.
         event_params,
         TIMESTAMP_MICROS(event_previous_timestamp) AS event_previous_timestamp,
-        event_value_in_usd,
+        event_value_in_usd AS event_value,
         event_bundle_sequence_id,
         TIMESTAMP_MICROS(event_server_timestamp_offset) AS event_server_timestamp_offset,
         user_id,

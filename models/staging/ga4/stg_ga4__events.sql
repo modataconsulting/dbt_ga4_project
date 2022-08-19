@@ -27,6 +27,7 @@ unnest_default_event_params AS (
         {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
         {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
         IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, 0) AS session_engaged,
+        CAST(CAST(ROUND({{ unnest_by_key_alt('event_params', 'engagement_time_msec', 'int') }} / 1000) AS STRING) AS TIME FORMAT 'SSSSS') AS engagment_time,
         {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
         {{ unnest_by_key('event_params', 'page_location') }},
         {{ unnest_by_key('event_params', 'page_title') }},

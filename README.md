@@ -1,4 +1,4 @@
-**NOTE: This project is still very much a work in progress, with much of the larger model restructering still to come...**
+***NOTE: This project is still very much a work in progress, with much of the larger model restructuring still to come.***
 
 # dbt GA4 Project
 First and foremost, this project is based off of the dbt [GA4 Package by Velir](https://hub.getdbt.com/velir/ga4/latest), but has been modified and refactored for internal purposes.
@@ -13,7 +13,7 @@ This project and any future projects that may be based off of this intial `dbt_g
 - [GitLab's SQL Style Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide)
 
 # Models
-***DAG Overview***
+<p align="center">***DAG Overview***</p>
 ![DAG Overview](assets/DAG.png)
 ## Core Models
 | Model Name | Description |

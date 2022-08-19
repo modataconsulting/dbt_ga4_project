@@ -33,28 +33,7 @@
 WITH source AS (
 
     SELECT 
-        PARSE_DATE('%Y%m%d', event_date) AS event_date,
-        TIMESTAMP_MICROS(event_timestamp) AS event_timestamp,
-        event_name,
-        event_params,
-        TIMESTAMP_MICROS(event_previous_timestamp) AS event_previous_timestamp,
-        event_value_in_usd,
-        event_bundle_sequence_id,
-        TIMESTAMP_MICROS(event_server_timestamp_offset) AS event_server_timestamp_offset,
-        user_id,
-        user_pseudo_id,
-        privacy_info,
-        user_properties,
-        TIMESTAMP_MICROS(user_first_touch_timestamp) AS user_first_touch_timestamp,
-        user_ltv,
-        device,
-        geo,
-        app_info,
-        traffic_source,
-        stream_id,
-        platform,
-        ecommerce,
-        items
+        *
     FROM
         {{ source('ga4', 'events') }}
     WHERE
@@ -74,19 +53,19 @@ WITH source AS (
 renamed as (
 
     SELECT 
-        event_date,
-        event_timestamp,
+        PARSE_DATE('%Y%m%d', event_date) AS event_date,
+        TIMESTAMP_MICROS(event_timestamp) AS event_timestamp,
         LOWER(REPLACE(TRIM(event_name), ' ', '_')) AS event_name, -- Ensure all event names are snake_cased.
         event_params,
-        event_previous_timestamp,
+        TIMESTAMP_MICROS(event_previous_timestamp) AS event_previous_timestamp,
         event_value_in_usd,
         event_bundle_sequence_id,
-        event_server_timestamp_offset,
+        TIMESTAMP_MICROS(event_server_timestamp_offset) AS event_server_timestamp_offset,
         user_id,
         user_pseudo_id,
         privacy_info,
         user_properties,
-        user_first_touch_timestamp,
+        TIMESTAMP_MICROS(user_first_touch_timestamp) AS user_first_touch_timestamp,
         user_ltv,
         device,
         geo,

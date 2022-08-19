@@ -5,6 +5,7 @@
 	- [x] Add a singular `_metric_definitions.md` file to root of the `models` folder. See [here](https://gitlab.com/gitlab-data/analytics/-/tree/master/transform/snowflake-dbt/models) for inspo.
 		- [ ] Essentially each metric definition would be in this format: `{% docs %} <Enter your metric definition here, like this. [Source](https://like-to-source-file.here/)> {% enddocs %}`
 		- [ ] Need to update as metrics & dimensions are added, removed, or changed.
+	- [ ] Add in [this](https://stackoverflow.com/a/62836622).
 - [ ] Docs to Fix:
 	- [ ] Change `__overview__.md` to simply be a high-level overview with links to say the `README.md`, `Projet Style Guide`, and the `whatever else here` for the project.
 		- [ ] See [here](https://gitlab.com/gitlab-data/analytics/-/blob/master/transform/snowflake-dbt/models/overview.md) for inspo.
@@ -143,6 +144,7 @@ REASONING: Currently there is only a Staging and Mart Models, and no Intermediat
 	- [x]
 
 # OTHER CONSIDERATIONS & IDEAS
+- Check [this](https://docs.getdbt.com/docs/building-a-dbt-project/metrics) out.
 - IDEALS FOR WHY I AM MAKING SOME OF MY CHOICES REVOLVE AROUND: IMPLICIT VS EXPLICIT
 	- TO WRITE ON THIS EXTENSIVELY ONCE PROJECT IS MORE MATURE...
 - See this [Stack Overflow Comment](https://stackoverflow.com/questions/64007239/hi-how-do-we-define-select-statement-as-a-variable-in-dbt), as this may be a better way to implement the `unest_params` macro:

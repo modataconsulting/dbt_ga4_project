@@ -14,7 +14,8 @@ This project and any future projects that may be based off of this intial `dbt_g
 
 # Models
 
-<p align="center"><b><i> DAG Overview </p>
+<p align="center"><b><i> DAG Overview </b></i></p>
+
 ![DAG Overview](assets/DAG.png)
 
 ## Core Models

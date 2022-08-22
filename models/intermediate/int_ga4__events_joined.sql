@@ -19,12 +19,23 @@ WITH events AS (
 
 ),
 
+add_first_last_params AS (
+
+    SELECT
+        *,
+
+        IF({{ get_last('session_key', 'event_key') }} = event_key, 1, 0) AS is_exit
+    FROM
+        events
+
+),
+
 join_event_params AS (
 
     SELECT
         *
     FROM
-        events
+        add_first_last_params
         LEFT JOIN {{ ref('TESTING__stg_ga4__event_params') }} USING (event_key)
 
 ),
@@ -47,6 +58,16 @@ join_user_props AS (
         join_items
         LEFT JOIN {{ ref('TESTING__stg_ga4__user_props') }} USING (event_key)
 
+),
+
+join_traffic_sources AS (
+
+    SELECT
+        *
+    FROM
+        join_user_props
+        LEFT JOIN {{ ref('TESTING__stg_ga4__traffic_sources') }} USING (event_key)
+
 )
 
-SELECT * FROM join_user_props
+SELECT * FROM join_traffic_sources

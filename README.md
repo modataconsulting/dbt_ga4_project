@@ -15,16 +15,25 @@ This project and any future projects that may be based off of this intial `dbt_g
 # Models
 
 <p align="center"><b><i> DAG Overview </b></i></p>
+***NOTE: This DAG Image is not current & will continue to change till all models are finalized.***
 
 ![DAG Overview](assets/DAG.png)
 
-## Core Models
+## Mart Models
 | Model Name | Description |
 |------------|-------------|
 | dim_ga4__users | This is the Dimension Table for user-level Dimensions, such as `first` & `last_seen_date`, `geo`, and `traffic_source`. This table is grouped by the hashed `user_key` dimension, which is based on `user_id`, or `user_pseudo_id` if one doesn't exist. | 
 | dim_ga4__sessions | This is the dimension table for session-level dimensions, such as `landing_page`, `device`, and campaign-related attributes. |
 | fct_ga4__pages | This is the Fact Table for page-related Metrics, such as `page_views`, `exits`, and `time_on_page`. This table is grouped by `page_title`, `event_date`, and `page_location`. |
 | fct_ga4__sessions | This is the fact table for session-level metrics, such as `sessions_engaged`, `engagement_time`, and `page_views`. This table is grouped by both `session_key` and `user_key`. |
+
+***NOTE: Mart Models will eventually become:***
+| Model Name | Description |
+|------------|-------------|
+| ga4__events | ...[TO DO]... |
+| ga4__pages | ...[TO DO]... |
+| ga4__sessions | ...[TO DO]... |
+| ga4__users | ...[TO DO]... |
 
 ## Staging Models
 | Model Name | Description |
@@ -42,6 +51,17 @@ This project and any future projects that may be based off of this intial `dbt_g
 | stg_ga4__users_first_last_pageviews | [REORDER THIS] ... ADD DESCRIPTION HERE ... |
 | stg_ga4__users_first_last_events | [REORDER THIS] ... ADD DESCRIPTION HERE ... |
 
+***NOTE: Staging Models will eventually become:***
+| Model Name | Description |
+|------------|-------------|
+| stg_ga4__events | ...[TO DO]... |
+| stg_ga4__items | ...[TO DO]... |
+| stg_ga4__traffic_sources | ...[TO DO]... |
+| stg_ga4__user_props | ...[TO DO]... |
+| ...[TO DO]... | ...[TO DO]... |
+
+***NOTE: Intermedia Models will also eventually be included.***
+
 # Macros
 | Macro Name | Description |
 |------------|-------------|
@@ -54,6 +74,8 @@ This project and any future projects that may be based off of this intial `dbt_g
 | extract_hostname_from_url | This macro extracts the `hostname` from the `URL`. |
 | extract_query_string_from_url | This macro extracts the `query_parameters` from the `URL`. |
 | remove_query_parameters | This macro will remove any `query_parameters` from the `URL` that you specify in the `dbt_project.yml` file. |
+
+***NOTE: These Macros are also not finalized & are likely to change.***
 
 # Seeds
 | Seed File | Description |
@@ -101,6 +123,8 @@ vars:
   ga4:
       conversion_events:['purchase','download']
 ```
+
+***NOTE: These Variables are also not finalized & are likely to change.***
 
 ### Derived User Properties [TO HANDLE DIFFERENTLY]
 Derived user properties are different from "User Properties" in that they are derived from event parameters. This provides additional flexibility in allowing users to turn any event parameter into a user property. 

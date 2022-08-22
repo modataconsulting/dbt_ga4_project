@@ -9,7 +9,7 @@ WITH base AS (
 
 ),
 
-unnest_event_params AS (
+unnest_custom_event_params AS (
 
     SELECT
         event_key,
@@ -25,4 +25,4 @@ unnest_event_params AS (
 
 )
 
-SELECT * FROM unnest_event_params
+SELECT * FROM unnest_custom_event_params

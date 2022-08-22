@@ -16,105 +16,35 @@ WITH joined_base_events AS (
 
 ),
 
--- I WANT EXPLICITLY LIST ALL BASE EVENTS INTIALLY FOR DOWNSTREAM INTERPREBILLITY AND UNNEST THEM TO BE WIDE & DENOMALIZED --
--- UNNEST ALL DEFAULT EVENTS --
 unnest_default_event_params AS (
 
-    SELECT
+    SELECT       
         *,
         
         -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
         {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
         {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
-        IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, 0) AS session_engaged,
-        CAST(CAST(ROUND({{ unnest_by_key_alt('event_params', 'engagement_time_msec', 'int') }} / 1000) AS STRING) AS TIME FORMAT 'SSSSS') AS engagment_time,
+        IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, 0) AS is_engaged_session,
+        CAST(CAST(ROUND({{ unnest_by_key_alt('event_params', 'engagement_time_msec', 'int') }} / 1000) AS STRING) AS TIME FORMAT 'SSSSS') AS engagement_duration,
         {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
+        IF(({{ unnest_by_key_alt('event_params', 'entrances', 'int') }}) = 1, 1, 0) AS is_entrance,
         {{ unnest_by_key('event_params', 'page_location') }},
+        -- ADD 'page_path' AS WELL --
         {{ unnest_by_key('event_params', 'page_title') }},
         {{ unnest_by_key('event_params', 'page_referrer') }},
-        {{ unnest_by_key('event_params', 'source') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
-        {{ unnest_by_key('event_params', 'medium') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
-        {{ unnest_by_key('event_params', 'campaign') }}, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
+        
+        -- SEEING SOME DISCREPANCIES BETWEEN THIS AND MANUALLY PULLING FROM EVENT PARAMS --
+        -- USING 'test_' PREFIX IN MEANTIME TO DIFFERENTIATE --
+        {{ unnest_by_key_alt('event_params', 'source') }} AS test_source, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
+        {{ unnest_by_key_alt('event_params', 'medium') }} AS test_medium, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
+        {{ unnest_by_key_alt('event_params', 'campaign') }} AS test_campaign_name, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
         IF(event_name = 'page_view', 1, 0) AS is_page_view, -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
-        IF(event_name = 'purchase', 1, 0) AS is_purchase -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
+        IF(event_name = 'purchase', 1, 0) AS is_purchase, -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
+        IF(event_name = 'first_visit', 1, 0) AS is_new_user
     FROM
         joined_base_events
 
 ),
-
--- TODO: UNNEST ALL OTHER DEFAULT REPEATED FIELDS HERE --
----------------------------------------------------------
-
--- INCLUDE 'privacy_info' RECORD FIELD HERE? --
-
--- REPEATED FIELD: INCLUDE 'user_properties' RECORD FIELD HERE? --
-
--- INCLUDE 'user_ltv' RECORD FIELD HERE? --
-
-unnest_device AS (
-
-    SELECT
-        *,
-
-        device.category                 AS category, -- RENAME TO 'device_cateogry' or 'device_type' INSTEAD? --
-        device.mobile_brand_name        AS mobile_brand_name,
-        device.mobile_model_name        AS mobile_model_name,
-        device.mobile_marketing_name    AS mobile_marketing_name,
-        device.mobile_os_hardware_model AS mobile_os_hardware_model,
-        device.operating_system         AS operating_system,
-        device.operating_system_version AS operating_system_version,
-        device.vendor_id                AS vendor_id,
-        device.advertising_id           AS advertising_id,
-        device.language                 AS language,
-        device.is_limited_ad_tracking   AS is_limited_ad_tracking,
-        device.time_zone_offset_seconds AS time_zone_offset_seconds,
-        device.web_info.browser         AS browser,
-        device.web_info.browser_version AS browser_version
-    FROM
-        unnest_default_event_params
-
-),
-
-unnest_geo AS (
-
-    SELECT
-        *,
-
-        geo.continent     AS continent,
-        geo.sub_continent AS sub_continent,
-        geo.country       AS country,
-        geo.region        AS region,
-        geo.city          AS city,
-        geo.metro         AS metro
-    FROM
-        unnest_device
-
-),
-
--- INCLUDE 'app_info' RECORD FIELD HERE? --
-
--- SEEING SOME DISCREPANCIES BETWEEN THIS AND MANUALLY PULLING FROM EVENT PARAMS --
--- USING 'test_' PREFIX IN MEANTIME TO DIFFERENTIATE --
-unnest_traffic_source AS (
-
-    SELECT
-        *,
-
-        traffic_source.medium AS test_medium,
-        traffic_source.name   AS test_name, -- CHANGE TO 'campaign_name' INSTEAD? --
-        traffic_source.source AS test_source
-    FROM
-        unnest_geo
-
-),
-
--- INCLUDE 'event_dimensions' RECORD FIELD HERE? --
-
--- INCLUDE 'eccommerce' RECORD FIELD HERE? --
-
--- REPEATED FIELD: INCLUDE 'items' RECORD FIELD HERE? --
-
----------------------------------------------------------
 
 -- Add a unique key for the user that checks for user_id and then pseudo_user_id.
 add_user_key AS (
@@ -127,7 +57,7 @@ add_user_key AS (
             ELSE NULL -- this case is reached when privacy settings are enabled
         END AS user_key
     FROM
-        unnest_traffic_source
+        unnest_default_event_params
 
 ),
 
@@ -149,6 +79,8 @@ add_session_key AS (
         add_user_key
 
 ),
+
+-- ADD 'page_key' & 'page_number' HERE?? --
 
 -- Add event numbers for each event.
 add_event_number AS (
@@ -179,6 +111,78 @@ add_event_key AS (
 
 ),
 
+-- Add derived boolean params specificying the first & last events.
+add_is_first_last_params AS (
+
+    SELECT
+        *,
+
+        IF({{ get_first('session_key', 'event_key') }} = event_key, 1, 0) AS is_first_session_event,
+        IF({{ get_last('session_key', 'event_key') }} = event_key, 1, 0) AS is_last_session_event,
+        IF({{ get_first('user_key', 'event_key') }} = event_key, 1, 0) AS is_first_user_event,
+        IF({{ get_last('user_key', 'event_key') }} = event_key, 1, 0) AS is_last_user_event,
+    FROM
+        add_event_key
+
+),
+
+-- I WANT EXPLICITLY LIST ALL BASE EVENTS INTIALLY FOR DOWNSTREAM INTERPREBILLITY AND UNNEST THEM TO BE WIDE & DENOMALIZED --
+
+-- TODO: UNNEST ALL OTHER DEFAULT REPEATED FIELDS HERE --
+---------------------------------------------------------
+
+-- INCLUDE 'privacy_info' RECORD FIELD HERE? --
+
+-- INCLUDE 'user_ltv' RECORD FIELD HERE? --
+
+unnest_device AS (
+
+    SELECT
+        *,
+
+        device.category                 AS category, -- RENAME TO 'device_cateogry' or 'device_type' INSTEAD? --
+        device.mobile_brand_name        AS mobile_brand_name,
+        device.mobile_model_name        AS mobile_model_name,
+        device.mobile_marketing_name    AS mobile_marketing_name,
+        device.mobile_os_hardware_model AS mobile_os_hardware_model,
+        device.operating_system         AS operating_system,
+        device.operating_system_version AS operating_system_version,
+        device.vendor_id                AS vendor_id,
+        device.advertising_id           AS advertising_id,
+        device.language                 AS language,
+        device.is_limited_ad_tracking   AS is_limited_ad_tracking,
+        device.time_zone_offset_seconds AS time_zone_offset_seconds,
+        device.web_info.browser         AS browser,
+        device.web_info.browser_version AS browser_version
+    FROM
+        add_is_first_last_params
+
+),
+
+unnest_geo AS (
+
+    SELECT
+        *,
+
+        geo.continent     AS continent,
+        geo.sub_continent AS sub_continent,
+        geo.country       AS country,
+        geo.region        AS region,
+        geo.city          AS city,
+        geo.metro         AS metro
+    FROM
+        unnest_device
+
+),
+
+-- INCLUDE 'app_info' RECORD FIELD HERE? --
+
+-- INCLUDE 'event_dimensions' RECORD FIELD HERE? --
+
+-- INCLUDE 'eccommerce' RECORD FIELD HERE? --
+
+---------------------------------------------------------
+
 -- Remove specific query strings from page_location field.
 remove_query_params AS (
 
@@ -197,7 +201,7 @@ remove_query_params AS (
 
         {%- endif %}
     FROM
-        add_event_key
+        unnest_geo
 
 ),
 
@@ -206,8 +210,9 @@ enrich_params AS (
 
     SELECT
         *,
-        {{ extract_hostname_from_url('page_location') }} AS page_hostname,
-        {{ extract_query_string_from_url('page_location') }} AS page_query_string,
+        {{ extract_hostname_from_url('page_location') }}           AS page_hostname,
+        {{ extract_query_string_from_url('page_location') }}       AS page_query_string,
+        CONCAT('/', {{ dbt_utils.get_url_path('page_location') }}) AS page_path
     FROM
         remove_query_params
 

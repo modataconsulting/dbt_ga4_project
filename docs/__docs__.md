@@ -1,3 +1,83 @@
+# MODELS
+{% docs dim_ga4__users %}
+This is the Dimension Table for user-level Dimensions, such as `first` & `last_seen_date`, `geo`, and `traffic_source`. This table is grouped by the hashed `user_key` dimension, which is based on `user_id`, or `user_pseudo_id` if one doesn't exist.
+{% enddocs %}
+
+{% docs dim_ga4__sessions %}
+This is the dimension table for session-level dimensions, such as `landing_page`, `device`, and campaign-related attributes.
+{% enddocs %}
+
+{% docs fct_ga4__pages %}
+This is the Fact Table for page-related Metrics, such as `page_views`, `exits`, and `total_engagement_duration`. This table is grouped by `page_title`, `event_date`, and `page_location`.
+{% enddocs %}
+
+{% docs fct_ga4__sessions %}
+This is the fact table for session-level metrics, such as `sessions_engaged`, `engagement_time`, and `page_views`. This table is grouped by both `session_key` and `user_key`.
+{% enddocs %}
+
+{% docs ga4__events %}
+This is the table for event-level metrics & dimensions. TO ADD A BETTER DESCRIPTION.
+{% enddocs %}
+
+# MACROS
+{% docs default_channel_groupings %}
+This macro determines the `default_channel_grouping` dimension based on following: 
+* `source`, 
+* `medium`, and 
+* `source_category` -- which is desiganted in the `ga4_source_categories.csv` seed file.
+
+The resulting `default_channel_grouping` will be one of the following:
+* `Direct`
+* `Paid Social`
+* `Oraginc Social`
+* `Email`
+* `Affiliates`
+* `Paid Shopping`
+* `Paid Search`
+* `Display`
+* `Other Advertising`
+* `Organic Search`
+* `Organic Video`
+* `Organic Shopping`
+* `Audio`
+* `SMS`
+* `(Other)`
+{% enddocs %}
+
+{% docs get_position %}
+This macro returns either the `FIRST` or `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+{% enddocs %}
+
+{% docs get_first %}
+This macro returns the `FIRST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+{% enddocs %}
+
+{% docs get_last %}
+This macro returns  the `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+{% enddocs %}
+
+{% docs stage_custom_parameters %}
+This macro stages any `custom_parameters` that you specify in the `dbt_project.yml` file, for the purpose of including them in the final `dim_ga4_users` table.
+{% enddocs %}
+
+{% docs unnest_by_key %}
+This macro unnests the specified `key_to_extract` from the `column_to_unnest`, and may require the additional `value_type` parameter:
+* The `value_type` will default a `string`, but may require either a `int` or `float` value_type.
+{% enddocs %}
+
+{% docs extract_hostname_from_url %}
+This macro extracts the `hostname` from the `URL`.
+{% enddocs %}
+
+{% docs extract_query_string_from_url %}
+This macro extracts the `query_parameters` from the `URL`.
+{% enddocs %}
+
+{% docs remove_query_parameters %}
+This macro will remove any `query_parameters` from the `URL` that you specify in the `dbt_project.yml` file.
+{% enddocs %}
+
+# METRICS
 -- CHANGE TO SPECIFY BETWEEN METRICS & DIMENSIONS --
 
 {% docs user_key %} A hashed primary key for each user, which is based on `user_id`, or `user_pseudo_id` if one doesn't exist. {% enddocs %}
@@ -114,7 +194,7 @@
 
 {% docs exits %} The number of times that the last event recorded for a session occurred on a page or screen. {% enddocs %}
 
-{% docs time_on_page %} The total duration of time each page was viewed. {% enddocs %}
+{% docs total_engagement_duration %} The total duration of time each page was viewed. {% enddocs %}
 
 {% docs scroll_events %} The number of times a user reaches the bottom of each page (i.e., when a 90% vertical depth becomes visible). {% enddocs %}
 
@@ -134,6 +214,7 @@
 
 {% docs page_referrer %} The first referring URL, which is the user's previous URL and can be your website's domain or other domains. {% enddocs %}
 
+-- ITEMS --
 {% docs item_id %} The ID of the item. {% enddocs %}
 
 {% docs item_name %} The name of the item. {% enddocs %}
@@ -185,5 +266,6 @@
 {% docs creative_name %} The name of a creative used in a promotional spot. {% enddocs %}
 
 {% docs creative_slot %} The name of a creative slot. {% enddocs %}
+---------------------
 
 {% docs  %}  {% enddocs %}

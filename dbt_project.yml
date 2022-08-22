@@ -16,8 +16,9 @@ test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
 snapshot-paths: ["snapshots"]
+docs-paths: ["docs"]
 asset-paths: ["assets"]
-target-path: "target" # directory which will store compiled SQL files
+#target-path: "target" # directory which will store compiled SQL files
 clean-targets:        # directories to be removed by `dbt clean`
   - "target"
   - "dbt_packages"
@@ -41,7 +42,7 @@ vars:
 
 # TESTING SOME VARS:
   excluded_events: []
-  excluded_event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']
+  excluded_event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']
   excluded_user_props: []
 
 ########################TO DO##############################

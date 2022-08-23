@@ -409,9 +409,9 @@ models:
       - name: session_engaged
         description: '{{ doc("session_engaged") }}'
 
-  # PAGES FACT TABLE #
-  - name: fct_ga4__pages
-    description: '{{ doc("fct_ga4__pages") }}'
+  # PAGES TABLE #
+  - name: ga4__pages
+    description: '{{ doc("ga4__pages") }}'
     columns:
       - name: event_date
         description: '{{ doc("event_date") }}'

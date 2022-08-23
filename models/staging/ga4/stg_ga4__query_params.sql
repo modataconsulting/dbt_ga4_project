@@ -1,4 +1,4 @@
--- INCLUDE DESCRIPTION HERE TO DESCRIBE FILE --
+-- TESTING THE MODEL HERE, LOL NO 'query_params' TO TEST AGAINST THO :/ --
 
 WITH event_and_query_string AS (
 

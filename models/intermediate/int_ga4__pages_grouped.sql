@@ -19,6 +19,7 @@ WITH page_views AS (
         SUM(is_page_view) AS page_views,
         COUNT(DISTINCT user_key) AS users,
         SUM(is_new_user) AS new_users,
+        COUNT(DISTINCT session_key) AS sessions,
         SUM(is_entrance) AS entrances, -- CURRENTLY OVERCOUNTING, NEED TO EXCLUDE 'bounces' ESSENTIALL --
         ROUND(SAFE_DIVIDE(SUM(is_entrance), COUNT(DISTINCT session_key)), 2) AS entrance_rate, -- CURRENTLY OVERCOUNTING, NEED TO EXCLUDE 'bounces' ESSENTIALL --
         SUM(is_exit) AS exits, -- CURRENTLY OVERCOUNTING, NEED TO EXCLUDE 'bounces' ESSENTIALL --
@@ -26,7 +27,7 @@ WITH page_views AS (
         CAST(CAST(ROUND(SUM(engagement_time_msec / 1000)) AS STRING) AS TIME FORMAT 'SSSSS') AS total_engagement_duration,
         CAST(CAST(ROUND(AVG(engagement_time_msec / 1000)) AS STRING) AS TIME FORMAT 'SSSSS') AS avg_engagement_duration
     FROM
-        {{ ref('int_ga4__events_joined') }} -- REPLACE WITH 'ga4__events' INSTEAD WHEN FINISHED --
+        {{ ref('ga4__events') }}
     GROUP BY
         1,
         2,

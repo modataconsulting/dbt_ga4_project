@@ -1,4 +1,4 @@
-***NOTE: This project is still very much a work in progress, with much of the larger model restructuring still to come.***
+***NOTE: This project is still very much a work in progress, with much of the larger model restructuring still to come, see the [TODO](/TODO.md) file for more info.***
 
 # dbt GA4 Project
 First and foremost, this project is based off of the dbt [GA4 Package by Velir](https://hub.getdbt.com/velir/ga4/latest), but has been modified and refactored for internal purposes.
@@ -8,7 +8,7 @@ This project uses [Google Analytics 4 BigQuery Exports](https://support.google.c
 Find more info about Google Analytics 4 BigQuery Exports [here](https://developers.google.com/analytics/bigquery).
 
 ## Style Guide:
-This project and any future projects that may be based off of this intial `dbt_ga4_project`, will be following [This Project's Style Guide...IN PROGRESS](), which borrows ideals from the following Style Guides:
+This project and any future projects that may be based off of this intial `dbt_ga4_project`, will be following [This Project's Style Guide...IN PROGRESS](/STYLEGUIDE.md), which borrows ideals from the following Style Guides:
 - [dbt's Style Guide](https://github.com/dbt-labs/corp/blob/main/dbt_style_guide.md)
 - [GitLab's SQL Style Guide](https://about.gitlab.com/handbook/business-technology/data-team/platform/sql-style-guide)
 
@@ -16,7 +16,7 @@ This project and any future projects that may be based off of this intial `dbt_g
 
 <p align="center"><b><i>
 DAG Overview<br>
-NOTE: This DAG Image is NOT current & will continue to CHANGE till all models are finalized.
+NOTE: This DAG Image is NOT current & will continue to CHANGE until all models are finalized.
 </b></i></p>
 
 ![DAG Overview](assets/DAG.png)
@@ -57,12 +57,19 @@ NOTE: This DAG Image is NOT current & will continue to CHANGE till all models ar
 | Model Name | Description |
 |------------|-------------|
 | stg_ga4__events | ...[TO DO]... |
+| stg_ga4__event_params | ...[TO DO]... |
 | stg_ga4__items | ...[TO DO]... |
 | stg_ga4__traffic_sources | ...[TO DO]... |
 | stg_ga4__user_props | ...[TO DO]... |
-| ...[TO DO]... | ...[TO DO]... |
+| stg_ga4__query_params | ...[TO DO]... |
 
-***NOTE: Intermedia Models will also eventually be included.***
+***NOTE: Intermedia Models will also eventually become:***
+| Model Name | Description |
+|------------|-------------|
+| int_ga4__events_joined | ...[TO DO]... |
+| int_ga4__pages_grouped | ...[TO DO]... |
+| int_ga4__sessions_grouped | ...[TO DO]... |
+| int_ga4__users_grouped | ...[TO DO]... |
 
 # Macros
 | Macro Name | Description |
@@ -126,7 +133,7 @@ vars:
       conversion_events:['purchase','download']
 ```
 
-***NOTE: These Variables are also not finalized & are likely to change.***
+***NOTE: These Variables are also NOT finalized & are LIKELY to change.***
 
 ### Derived User Properties [TO HANDLE DIFFERENTLY]
 Derived user properties are different from "User Properties" in that they are derived from event parameters. This provides additional flexibility in allowing users to turn any event parameter into a user property. 

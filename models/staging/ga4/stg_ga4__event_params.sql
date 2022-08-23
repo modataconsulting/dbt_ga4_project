@@ -1,5 +1,3 @@
--- TESTING THE MODEL HERE --
-
 WITH base AS (
 
     SELECT

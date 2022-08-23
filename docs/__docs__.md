@@ -1,22 +1,51 @@
+# SOURCES
+{% docs events %}
+Main events table composed of the exported GA4 day sharded event tables (event_YYYMMDD).
+{% enddocs %}
+
+{% docs events_intraday %}
+Intraday events table which is optionally exported by GA4. Always contains events from the current day.
+{% enddocs %}
+
 # MODELS
-{% docs dim_ga4__users %}
-This is the Dimension Table for user-level Dimensions, such as `first` & `last_seen_date`, `geo`, and `traffic_source`. This table is grouped by the hashed `user_key` dimension, which is based on `user_id`, or `user_pseudo_id` if one doesn't exist.
+{% docs base_ga4__events %}
+Base events model that pulls all fields from raw data. Resulting table is partitioned on event_date and is useful in that BQ queries can be cached against this table, but not against wildcard searches from the original tables which are sharded on date. Some light transformation and renaming beyond the base events model. Adds surrogate keys for sessions and events.
 {% enddocs %}
 
-{% docs dim_ga4__sessions %}
-This is the dimension table for session-level dimensions, such as `landing_page`, `device`, and campaign-related attributes.
+{% docs base_ga4__events_intraday %}
+Base model for intraday events that will be unioned to the past events stored in the incremental model.
 {% enddocs %}
 
-{% docs ga4__pages %}
-This is the table for page-related Metrics, such as `page_views`, `exits`, and `total_engagement_duration`. This table is grouped by `page_title`, `event_date`, and `page_location`.
+{% docs stg_ga4__query_params %}
+This model pivots the query string parameters contained within the event's page_location field to become rows. Each row is a single parameter/value combination contained in a single event's query string.
 {% enddocs %}
 
-{% docs fct_ga4__sessions %}
-This is the fact table for session-level metrics, such as `sessions_engaged`, `engagement_time`, and `page_views`. This table is grouped by both `session_key` and `user_key`.
+{% docs stg_ga4__events %}
+Staging model that contains window functions used to generate unique keys.
+{% enddocs %}
+
+{% docs stg_ga4__items %}
+Flattens out the 'items' field for e-commerce events such as purchase and add_to_cart.
+{% enddocs %}
+
+{% docs stg_ga4__traffic_sources %}
+Unnests source, medium and name from the traffic_sources nested field, and adds a default_channel_grouping based off those fields.
 {% enddocs %}
 
 {% docs ga4__events %}
-This is the table for event-level metrics & dimensions. TO ADD A BETTER DESCRIPTION.
+This is the table for event-level dimensions & metrics. ...TO ADD A BETTER DESCRIPTION...
+{% enddocs %}
+
+{% docs ga4__pages %}
+This is the table for page-level dimensions & metrics, such as `page_views`, `exits`, and `total_engagement_duration`. This table is grouped by `page_title`, `event_date`, and `page_location`.
+{% enddocs %}
+
+{% docs ga4__sessions %}
+This is the  table for session-level dimensions & metrics, such as `sessions_engaged`, `engagement_duration`, and `page_views`. This table is grouped by both `session_key` and `user_key`.
+{% enddocs %}
+
+{% docs ga4__users %}
+This is the table for user-level dimensions & metrics, such as `first` & `last_seen_date`, `geo`, and `traffic_source`. This table is grouped by the hashed `user_key` dimension, which is based on `user_id`, or `user_pseudo_id` if one doesn't exist.
 {% enddocs %}
 
 # MACROS

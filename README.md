@@ -14,8 +14,10 @@ This project and any future projects that may be based off of this intial `dbt_g
 
 # Models
 
-<p align="center"><b><i> DAG Overview </b></i></p>
-***NOTE: This DAG Image is not current & will continue to change till all models are finalized.***
+<p align="center"><b><i>
+DAG Overview<br>
+NOTE: This DAG Image is NOT current & will continue to CHANGE till all models are finalized.
+</b></i></p>
 
 ![DAG Overview](assets/DAG.png)
 
@@ -182,7 +184,7 @@ vars:
 ### GA4 Recommended Events [TO REMOVE]
 See the README file at /dbt_packages/models/staging/ga4/recommended_events for instructions on enabling [Google's recommended events](https://support.google.com/analytics/answer/9267735?hl=en).
 
-## Resources:
+## Resources & References:
 - GA4 Resources:
   - [GA4 BigQuery Export schema](https://support.google.com/analytics/answer/7029846?hl=en&ref_topic=9359001)
   - [Intro To GA4 in BQ](https://www.ga4bigquery.com/introduction-to-google-analytics-4-ga4-export-data-in-bigquery/)

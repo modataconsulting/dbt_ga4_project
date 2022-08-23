@@ -7,8 +7,8 @@ This is the Dimension Table for user-level Dimensions, such as `first` & `last_s
 This is the dimension table for session-level dimensions, such as `landing_page`, `device`, and campaign-related attributes.
 {% enddocs %}
 
-{% docs fct_ga4__pages %}
-This is the Fact Table for page-related Metrics, such as `page_views`, `exits`, and `total_engagement_duration`. This table is grouped by `page_title`, `event_date`, and `page_location`.
+{% docs ga4__pages %}
+This is the table for page-related Metrics, such as `page_views`, `exits`, and `total_engagement_duration`. This table is grouped by `page_title`, `event_date`, and `page_location`.
 {% enddocs %}
 
 {% docs fct_ga4__sessions %}
@@ -108,7 +108,7 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 {% docs city %} The city from which user activity originates. For example, if someone visits your website from New York City, the text `New York` populates the dimension. {% enddocs %}
 ---------------------
 
--- DEVICE --
+## DEVICE
 {% docs category %} The type of device from which user activity originated. Device categories include `desktop`, `mobile`, and `tablet`. {% enddocs %}
 
 {% docs mobile_brand_name %} The brand name of the mobile device (e.g., Motorola, LG, or Samsung). {% enddocs %}
@@ -138,7 +138,7 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 {% docs browser_version %} The version of the browser from which user activity originated. For example, the browser version might be `96.0.4664.110`. {% enddocs %}
 ---------------------
 
--- TRAFFIC SOURCE --
+## TRAFFIC SOURCE
 {% docs medium %} The medium by which the user was first acquired. {% enddocs %}
 
 {% docs name %}  {% enddocs %}
@@ -176,7 +176,7 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 
 {% docs sum_event_value %} The sum of all monetary value parameters supplied with an event for a session. You can use this context-sensitive metric to capture data that's important to you (e.g. `revenue`, `time`, `distance`). {% enddocs %}
 
-{% docs session_engaged %} Whether or not (1 or 0) a session lasted 10 seconds or longer, or had 1 or more conversion events, or 2 or more page or screen views. {% enddocs %}
+{% docs session_engaged %} Whether or not (i.e., `1` or `0`) a session lasted 10 seconds or longer, or had 1 or more conversion events, or 2 or more page or screen views. {% enddocs %}
 
 {% docs event_date %} Date of when the associated page was viewed. {% enddocs %}
 
@@ -214,7 +214,7 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 
 {% docs page_referrer %} The first referring URL, which is the user's previous URL and can be your website's domain or other domains. {% enddocs %}
 
--- ITEMS --
+## ITEMS
 {% docs item_id %} The ID of the item. {% enddocs %}
 
 {% docs item_name %} The name of the item. {% enddocs %}
@@ -268,4 +268,29 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 {% docs creative_slot %} The name of a creative slot. {% enddocs %}
 ---------------------
 
-{% docs  %}  {% enddocs %}
+
+---------------------
+## MISC. [...TO DO...]
+---------------------
+
+{% docs user_id %} The user ID set via the setUserId API. {% enddocs %}
+
+{% docs user_pseudo_id %} The pseudonymous id (e.g., app instance ID) for the user. {% enddocs %}
+
+{% docs user_first_touch_timestamp %} The time (in microseconds) at which the user first opened the app or visited the site. {% enddocs %}
+
+{% docs stream_id %} The numeric ID of the stream. {% enddocs %}
+
+{% docs platform %} The platform on which the app was built. {% enddocs %}
+
+{% docs ads_storage %} Whether ad targeting is enabled for a user. Possible values: `Yes`, `No`, or `Unset`. {% enddocs %}
+
+{% docs analytics_storage %} Whether Analytics storage is enabled for the user. Possible values: `Yes`, `No`, or `Unset`. {% enddocs %}
+
+{% docs uses_transient_token %} Whether a web user has denied Analytics storage and the developer has enabled measurement without cookies based on transient tokens in server data. Possible values: `Yes`, `No`, or `Unset`. {% enddocs %}
+
+{% docs user_ltv %} A record of Lifetime Value information about the user. {% enddocs %}
+
+{% docs revenue %} The Lifetime Value (revenue) of the user. {% enddocs %}
+
+{% docs currency %} The Lifetime Value (currency) of the user. This field is not populated in intraday tables. {% enddocs %}

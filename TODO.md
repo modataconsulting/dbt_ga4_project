@@ -6,7 +6,7 @@
 	- [x] Add a singular `_metric_definitions.md` file to root of the `models` folder. See [here](https://gitlab.com/gitlab-data/analytics/-/tree/master/transform/snowflake-dbt/models) for inspo.
 		- [x] Essentially each metric definition would be in this format: `{% docs %} <Enter your metric definition here, like this. [Source](https://like-to-source-file.here/)> {% enddocs %}`
 		- [ ] Need to update as metrics & dimensions are added, removed, or changed.
-	- [ ] Add in [this](https://stackoverflow.com/a/62836622).
+	- [x] Add in [this](https://stackoverflow.com/a/62836622).
 	- [x] Restructure to be:
 		- [x] A single `__schema__.yml` file, for all sources & models at the root of A NEW `docs` folder.
 			- [x] i.e., combine `_core__models.yml`, `_ga4__models.yml` & `_ga4__sources.yml`.
@@ -76,7 +76,7 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 		- [ ] `avg_page_view_duration`
 	- [ ] Session-related:
 		- [ ] `avg_session_duration`
-		- [ ] `lifetime_session_duration` **SEE BELOW IN `User Lifetime Metrics`.**
+		- [x] `lifetime_session_duration` **SEE BELOW IN `User Lifetime Metrics`.**
 - [ ] `SESSION-SCOPE` Metrics:
 	- [ ] Event-related:
 		- [ ] `avg_events_per_session`
@@ -88,7 +88,7 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 		- [x] `entrance_rate`: The percentage of sessions that started on a page or screen (`Entrances` / `Sessions`).
 		- [x] `exit_rate`: The percentage of sessions that ended on a page or screen (`Exits` / `Sessions`).
 	- [ ] Event-related:
-		- [ ] `events_per_page`
+		- [x] `events_per_page`
 	- [ ] Mirroring GA4 UI:
 		- [x] `views`, just stick with `page_views`?
 		- [x] `users`
@@ -110,10 +110,10 @@ REASONING: **Wide & Denomalized.** Unlike old school warehousing, in the modern 
 
 - [ ] [User Lifetime](https://support.google.com/analytics/answer/9143382) Metrics:
 	- [ ] `lifetime_engaged_sessions`: The number of engaged sessions a user had since they first visited your website or application.
-	- [ ] `lifetime_engagemenet_duration`:The length of time since a user's first visit that the user was active on your website or application while it was in the foreground.
-	- [ ] `lifetime_session_duration`: The total duration of user sessions, from their first session until the current session expires, including time when your website or application is in the background.
+	- [x] `lifetime_engagemenet_duration`:The length of time since a user's first visit that the user was active on your website or application while it was in the foreground.
+	- [x] `lifetime_session_duration`: The total duration of user sessions, from their first session until the current session expires, including time when your website or application is in the background.
 	- [ ] `lifetime_ad_revenue`: The ad revenue you generate from someone since their first visit to your website or app.
-	- [ ] `LTV` or `lifetime_value`: Lifetime value (LTV) shows the total revenue from purchases on your website or application. You can use the data to determine how valuable users are based on additional revenue you generate.
+	- [x] `LTV` or `lifetime_value`: Lifetime value (LTV) shows the total revenue from purchases on your website or application. You can use the data to determine how valuable users are based on additional revenue you generate.
 	- [x] `lifetime_sessions`: **ALREADY HAVE THIS - `sessions` @ User Level**
 	- [x] `lifetime_transactions` **ALREADY HAVE THIS - `purchases` @ User Level**
 - [ ] ...WAY MORE...

@@ -36,7 +36,7 @@ join_event_params AS (
         *
     FROM
         add_first_last_params
-        LEFT JOIN {{ ref('TESTING__stg_ga4__event_params') }} USING (event_key)
+        LEFT JOIN {{ ref('stg_ga4__event_params') }} USING (event_key)
 
 ),
 
@@ -46,7 +46,7 @@ join_items AS (
         *
     FROM
         join_event_params
-        LEFT JOIN {{ ref('TESTING__stg_ga4__items') }} USING (event_key)
+        LEFT JOIN {{ ref('stg_ga4__items') }} USING (event_key)
 
 ),
 
@@ -56,7 +56,7 @@ join_user_props AS (
         *
     FROM
         join_items
-        LEFT JOIN {{ ref('TESTING__stg_ga4__user_props') }} USING (event_key)
+        LEFT JOIN {{ ref('stg_ga4__user_props') }} USING (event_key)
 
 ),
 
@@ -66,7 +66,7 @@ join_traffic_sources AS (
         *
     FROM
         join_user_props
-        LEFT JOIN {{ ref('TESTING__stg_ga4__traffic_sources') }} USING (event_key)
+        LEFT JOIN {{ ref('stg_ga4__traffic_sources') }} USING (event_key)
 
 )
 

@@ -87,7 +87,10 @@ add_event_number AS (
 
     SELECT
         *,
-        ROW_NUMBER() OVER(PARTITION BY session_key) AS session_event_number -- Number each event within a session to help generate a unique event key.
+        ROW_NUMBER() OVER (
+            PARTITION BY session_key
+            ORDER BY event_timestamp
+        ) AS session_event_number -- Chronologically number each event within a session to help generate a unique event key.
     FROM
         add_session_key
 

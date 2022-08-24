@@ -86,15 +86,208 @@ NOTE: This DAG Image is NOT current & will continue to CHANGE until all models a
 
 ***NOTE: These Macros are also not finalized & are likely to change.***
 
+### get_first(`by_column_name`,`from_column_name`) ([source](macros/get_positions.sql))
+This macro returns the `FIRST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+
+**Args:**
+- `by_column_name` (required): The name of the column which you want to partition your selction by.
+- `from_column_name` (required): The name of the column to get the first value of. 
+
+**Usage:**
+```sql
+{{ get_first('<by_column_name>', '<from_column_name>') }}
+```
+
+**Example:** Get the landing_page of a corresponding Session by selecting the first `page_path` using that Session's `session_key`.
+```sql
+SELECT
+  {{ get_first('session_key', 'page_path') }} AS landing_page
+  ...
+```
+
+### get_last(`by_column_name`,`from_column_name`) ([source](macros/get_positions.sql))
+This macro returns the `LAST` position of a specified `from_column_name`, which is partioned by the `by_column_name`.
+
+**Args:**
+- `by_column_name` (required): The name of the column which you want to partition your selction by.
+- `from_column_name` (required): The name of the column to get the last value of. 
+
+**Usage:**
+```sql
+{{ get_last('<by_column_name>', '<from_column_name>') }}
+```
+
+**Example:** Get the last `event_key` for a corresponding Session using that Session's `session_key`.
+```sql
+SELECT
+  {{ get_last('session_key', 'event_key') }} AS last_session_event_key,
+  ...
+```
+
+### extract_hostname_from_url(`url`) ([source](macros/parse_url.sql))
+This macro extracts the `hostname` from a column containing a `url`.
+
+**Args:**
+- `url` (required): The column containting URLs.
+
+**Usage:**
+```sql
+{{ extract_hostname_from_url('<url>') }}
+```
+
+**Example:** Extract the `hostname` from the `page_location` column.
+```sql
+SELECT
+  {{ extract_hostname_from_url('page_location') }} AS page_hostname,
+  ...
+```
+
+### extract_query_string_from_url(`url`) ([source](macros/parse_url.sql))
+This macro extracts the `query_string` from a column containing a `url`.
+
+**Args:**
+- `url` (required): The column containting URLs.
+
+**Usage:**
+```sql
+{{ extract_query_string_from_url('<url>') }}
+```
+
+**Example:** Extract the `query_string` from the `page_location` column.
+```sql
+SELECT
+  {{ extract_query_string_from_url('page_location') }} AS page_query_string,
+  ...
+```
+
+### remove_query_parameters(`url`, `[parameters]`) ([source](macros/parse_url.sql))
+This macro removes the specified `parameters` from a column containing a `url`.
+
+**Args:**
+- `url` (required): The column containting URLs.
+- `parameters` (required, default=`[]`): A list of query parameters to remove from the URL.
+
+**Usage:**
+```sql
+{{ remove_query_parameters('<url>', '[parameters]')  }}
+```
+
+**Example:** Remove the parameters: `gclid`, `fbclid`, and `_ga` from the `page_location` column.
+```sql
+{% set parameters = ['gclid','fbclid','_ga'] %}
+
+SELECT
+  {{ remove_query_parameters('page_location', parameters) }} AS clean_page_location,
+  ...
+```
+
+### unnest_by_key(`column_to_unnest`, `key_to_extract`, `value_type` = "string") ([source](macros/unnest_by_keys.sql))
+This macro unnests a single key's value from an array. This macro will dynamically alias the sub-query with the name of the `column_to_unnest`.
+
+**Args:**
+- `column_to_unnest` (required): The array column to unnest the key's value from.
+- `key_to_extract` (required): The key by which to get the corresponding value for.
+- `value_type` (optional, default="string"): The data type of the key's value column.
+
+**Usage:**
+```sql
+{{ unnest_by_key('<column_to_unnest>', '<key_to_extract>', '<value_type>') }}
+```
+
+**Example:** Unnest the corresponding values for the keys: `page_location` and `ga_session_number` from the nested `event_params` column.
+```sql
+SELECT
+  -- Unnest the default STRING value type
+  {{ unnest_by_key('event_params', 'page_location') }},
+  -- Unnest the INT value type
+  {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
+  ...
+```
+
+### unnest_by_key_alt(`column_to_unnest`, `key_to_extract`, `value_type` = "string") ([source](macros/unnest_by_keys.sql))
+This macro unnests a single key's value from an array. This macro allows for a custom alias named sub-query.
+
+**Args:**
+- `column_to_unnest` (required): The array column to unnest the key's value from.
+- `key_to_extract` (required): The key by which to get the corresponding value for.
+- `value_type` (optional, default="string"): The data type of the key's value column.
+
+**Usage:**
+```sql
+{{ unnest_by_key_alt('<column_to_unnest>', '<key_to_extract>', '<value_type>') }} AS <custom_alias_name>,
+```
+
+**Example:** Unnest the corresponding values for the keys: `page_location` and `ga_session_number` from the nested `event_params` column. 
+```sql
+SELECT
+  -- Unnest the default STRING value type & use a custom alias
+  {{ unnest_by_key_alt('event_params', 'page_location') }} AS url, 
+  -- Unnest the INT value type & use a custom alias
+  {{ unnest_by_key_alt('event_params', 'ga_session_number',  'int') }} AS session_number,
+  ...
+```
+
+### get_event_params() ([source](macros/unnest_by_keys.sql))
+This macro will dynamically return all of the `keys` and their corresponding `value_types` found in the `event_params` array column.
+- This macro will exclude event_params added to the `excluded_event_params` variable, which is specified in the `dbt_project.yml` file.
+
+**Usage / Example:**
+```sql
+SELECT
+  {% for event_param in get_event_params() -%}
+
+  {{ unnest_by_key('event_params', event_param['event_param_key'], event_param['event_param_value']) }}
+    
+  {{- "," if not loop.last }}
+  {% endfor %}
+  ...
+```
+
+### default_channel_grouping(`source`, `medium`, `source_category`) ([source](macros/default_channel_groupings.sql))
+This macro determines the `default_channel_grouping` and will result in one the following classifications: 
+- `Direct`
+- `Paid Social`
+- `Oraginc Social`
+- `Email`
+- `Affiliates`
+- `Paid Shopping`
+- `Paid Search`
+- `Display`
+- `Other Advertising`
+- `Organic Search`
+- `Organic Video`
+- `Organic Shopping`
+- `Audio`
+- `SMS`
+- `(Other)`
+
+**Args:**
+- `source` (required): The source column used in determining the default channel grouping.
+- `medium` (required): The medium column used in determining the default channel grouping.
+- `source_category` (required): The source category column used in determining the default channel grouping. These are desiganted in the `ga4_source_categories.csv` seed file.
+
+**Usage:**
+```sql
+{{ default_channel_grouping('<source>', '<medium>', '<source_category>') }}
+```
+
+**Example:** 
+```sql
+SELECT
+  {{ default_channel_grouping('source', 'medium', 'source_category') }} AS default_channel_grouping,
+  ...
+```
+
 # Seeds
 | Seed File | Description |
 |-----------|-------------|
-| ga4_source_categories.csv| Google's mapping between `source` and `source_category`. More info and the download can be found [here](https://support.google.com/analytics/answer/9756891?hl=en) |
+| ga4_source_categories.csv| Google's mapping between `source` and `source_category`. More info and the download can be found [here](https://support.google.com/analytics/answer/9756891?hl=en). |
 
 Make sure to run `dbt seed` before running `dbt run`.
 
 # Installation & Configuration
 ## Setup
+...[TO DO]...
 
 ## Required Variables
 This package assumes that you have an existing DBT project with a BigQuery profile and a BigQuery GCP instance available with GA4 event data loaded. Source data is located using the following variables which must be set in your `dbt_project.yml` file.
@@ -117,6 +310,8 @@ vars:
 Find more info about the GA4 obfuscated dataset [here](https://developers.google.com/analytics/bigquery/web-ecommerce-demo-dataset). 
 
 ## Optional Variables
+***NOTE: These Variables are also NOT finalized & are LIKELY to change.***
+
 ### Query Parameter Exclusions
 Setting any `query_parameter_exclusions` will remove query string parameters from the `page_location` field for all downstream processing. Original parameters are captured in a new `original_page_location` field. Ex:
 ```
@@ -132,8 +327,6 @@ vars:
   ga4:
       conversion_events:['purchase','download']
 ```
-
-***NOTE: These Variables are also NOT finalized & are LIKELY to change.***
 
 ### Derived User Properties [TO HANDLE DIFFERENTLY]
 Derived user properties are different from "User Properties" in that they are derived from event parameters. This provides additional flexibility in allowing users to turn any event parameter into a user property. 
@@ -157,39 +350,6 @@ vars:
           user_property_name: "most_recent_param"  
           value_type: "string_value"
 ```
-
-### Custom Parameters [TO REMOVE]
-Within GA4, you can add custom parameters to any event. These custom parameters will be picked up by this package if they are defined as variables within your `dbt_project.yml` file using the following syntax:
-```
-[event name]_custom_parameters
-  - name: "[name of custom parameter]"
-    value_type: "[string_value|int_value|float_value|double_value]"
-```
-For example: 
-```
-vars:
-  ga4:
-    page_view_custom_parameters:
-          - name: "clean_event"
-            value_type: "string_value"
-          - name: "country_code"
-            value_type: "int_value"
-```
-
-### User Properties [TO REMOVE]
-User properties are provided by GA4 in the `user_properties` repeated field. The most recent user property for each user will be extracted and included in the `dim_ga4__users` model by configuring the `user_properties` variable in your project as follows:
-```
-vars:
-  ga4:
-    user_properties:
-      - user_property_name: "membership_level"
-        value_type: "int_value"
-      - user_property_name: "account_status"
-        value_type: "string_value"
-```
-
-### GA4 Recommended Events [TO REMOVE]
-See the README file at /dbt_packages/models/staging/ga4/recommended_events for instructions on enabling [Google's recommended events](https://support.google.com/analytics/answer/9267735?hl=en).
 
 ## Resources & References:
 - GA4 Resources:

@@ -138,7 +138,7 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 ---------------------
 
 ## DEVICE
-{% docs category %} The type of device from which user activity originated. Device categories include `desktop`, `mobile`, and `tablet`. {% enddocs %}
+{% docs device_category %} The type of device from which user activity originated. Device categories include `desktop`, `mobile`, and `tablet`. {% enddocs %}
 
 {% docs mobile_brand_name %} The brand name of the mobile device (e.g., Motorola, LG, or Samsung). {% enddocs %}
 
@@ -168,11 +168,11 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 ---------------------
 
 ## TRAFFIC SOURCE
-{% docs medium %} The medium by which the user was first acquired. {% enddocs %}
+{% docs medium %} The name of the medium (e.g. `paid search`, `organic search`, `email`, etc.) that first acquired the user. {% enddocs %}
 
-{% docs name %}  {% enddocs %}
+{% docs campaign %} The name of the marketing campaign that first acquired the user. {% enddocs %}
 
-{% docs source %} The source by which the user was first acquired. {% enddocs %}
+{% docs source %} The name of the traffic source that first acquired the user. {% enddocs %}
 --------------------
 
 {% docs first_page_location %} The complete URL of the webpage that a user visited first on your website. For example, if someone visits www.googlemerchandisestore.com/Bags?theme=1, then the complete URL will populate the dimension. {% enddocs %}

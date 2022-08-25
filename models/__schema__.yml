@@ -83,8 +83,8 @@ models:
         description: '{{ doc("city") }}'
 
       # FIRST_DEVICE #
-      - name: category
-        description: '{{ doc("category") }}'
+      - name: device_category
+        description: '{{ doc("device_category") }}'
 
       - name: mobile_brand_name
         description: '{{ doc("mobile_brand_name") }}'
@@ -129,8 +129,8 @@ models:
       - name: medium
         description: '{{ doc("medium") }}'
 
-      - name: name
-        description: '{{ doc("name") }}'
+      - name: campaign
+        description: '{{ doc("campaign") }}'
 
       - name: source
         description: '{{ doc("source") }}'
@@ -152,8 +152,8 @@ models:
         description: '{{ doc("city") }}'
 
       # LAST_DEVICE #
-      - name: category
-        description: '{{ doc("category") }}'
+      - name: device_category
+        description: '{{ doc("device_category") }}'
 
       - name: mobile_brand_name
         description: '{{ doc("mobile_brand_name") }}'
@@ -198,8 +198,8 @@ models:
       - name: medium
         description: '{{ doc("medium") }}'
 
-      - name: name
-        description: '{{ doc("name") }}'
+      - name: campaign
+        description: '{{ doc("campaign") }}'
 
       - name: source
         description: '{{ doc("source") }}'
@@ -258,8 +258,8 @@ models:
         description: '{{ doc("city") }}'
 
       # DEVICE #
-      - name: category
-        description: '{{ doc("category") }}'
+      - name: device_category
+        description: '{{ doc("device_category") }}'
 
       - name: mobile_brand_name
         description: '{{ doc("mobile_brand_name") }}'
@@ -304,8 +304,8 @@ models:
       - name: medium
         description: '{{ doc("medium") }}'
 
-      - name: name
-        description: '{{ doc("name") }}'
+      - name: campaign
+        description: '{{ doc("campaign") }}'
 
       - name: source
         description: '{{ doc("source") }}'

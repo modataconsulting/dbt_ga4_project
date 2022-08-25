@@ -40,6 +40,8 @@ vars:
   dataset: "ga4_obfuscated_sample_ecommerce"
   start_date: "20210120" ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
+  conversion_events: ['purchase']
+
 # TESTING SOME VARS:
   excluded_events: []
   excluded_event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']

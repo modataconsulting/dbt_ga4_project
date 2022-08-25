@@ -25,10 +25,10 @@ sessions AS (
         MAX(default_channel_grouping) AS default_channel_grouping,
         MAX(source)                   AS source,
         MAX(medium)                   AS medium,
-        MAX(campaign_name)            AS campaign_name,
+        MAX(campaign)                 AS campaign,
         MAX(country)                  AS country,
         MAX(city)                     AS city,
-        MAX(category)                 AS category,
+        MAX(device_category)          AS device_category,
         MAX(operating_system)         AS operating_system,
         -- [TODO] AS traffic_source,
         -- [TODO] AS geo,
@@ -37,10 +37,10 @@ sessions AS (
         -- [TODO] AS event_params,
 
         -- Facts/Metrics --
-        CAST(CAST(ROUND(SUM(engagement_time_msec / 1000)) AS STRING) AS TIME FORMAT 'SSSSS') AS session_duration,
-        SUM(is_page_view) AS page_views,
+        {{ get_total_duration('engagement_time_msec') }} AS session_duration,
+        COUNTIF(event_name = 'page_view') as page_views,
         MAX(session_event_number) AS session_event_count,
-        ROUND(SAFE_DIVIDE(MAX(session_event_number), SUM(is_page_view)), 2) AS avg_events_per_page,
+        ROUND(SAFE_DIVIDE(MAX(session_event_number), COUNTIF(event_name = 'page_view')), 2) AS avg_events_per_page,
         MAX(event_value) AS session_value
         -- ...[ADD COUNT OF EACH CONVERSION EVENT]... --
     FROM

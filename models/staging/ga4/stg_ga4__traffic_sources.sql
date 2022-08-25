@@ -12,7 +12,7 @@ unnest_traffic_sources AS (
     SELECT
         event_key,
         traffic_source.medium AS medium,
-        traffic_source.name   AS campaign_name,
+        traffic_source.name   AS campaign,
         traffic_source.source AS source
     FROM
         base
@@ -25,7 +25,7 @@ add_source_categories AS (
         event_key,
         source,
         medium,
-        campaign_name,
+        campaign,
         ga4_source_categories.source_category AS source_category
     FROM
         unnest_traffic_sources

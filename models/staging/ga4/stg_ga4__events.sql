@@ -16,31 +16,13 @@ WITH joined_base_events AS (
 
 ),
 
-unnest_default_event_params AS (
+unnest_required_event_params AS (
 
     SELECT       
         *,
         
-        -- DEFINATELY REFACTOR WITH MACRO TO BE DRY & DYNAMIC, USE IF/ELSE TO AUTO DETERMIN WHETHER IT WOULD BE STRING OR INT_VALUE -- 
-        {{ unnest_by_key('event_params', 'ga_session_id', 'int') }},
-        {{ unnest_by_key('event_params', 'ga_session_number',  'int') }},
-        IF(({{ unnest_by_key_alt('event_params', 'session_engaged') }}) = '1', 1, 0) AS is_engaged_session,
-        CAST(CAST(ROUND({{ unnest_by_key_alt('event_params', 'engagement_time_msec', 'int') }} / 1000) AS STRING) AS TIME FORMAT 'SSSSS') AS engagement_duration,
-        {{ unnest_by_key('event_params', 'engagement_time_msec', 'int') }},
-        IF(({{ unnest_by_key_alt('event_params', 'entrances', 'int') }}) = 1, 1, 0) AS is_entrance,
-        {{ unnest_by_key('event_params', 'page_location') }},
-        -- ADD 'page_path' AS WELL --
-        {{ unnest_by_key('event_params', 'page_title') }},
-        {{ unnest_by_key('event_params', 'page_referrer') }},
-        
-        -- SEEING SOME DISCREPANCIES BETWEEN THIS AND MANUALLY PULLING FROM EVENT PARAMS --
-        -- USING 'test_' PREFIX IN MEANTIME TO DIFFERENTIATE --
-        {{ unnest_by_key_alt('event_params', 'source') }} AS test_source, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
-        {{ unnest_by_key_alt('event_params', 'medium') }} AS test_medium, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
-        {{ unnest_by_key_alt('event_params', 'campaign') }} AS test_campaign_name, -- PULL FROM THE DEDICATED 'traffic_source' RECORD FIELD INSTEAD? --
-        IF(event_name = 'page_view', 1, 0) AS is_page_view, -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
-        IF(event_name = 'purchase', 1, 0) AS is_purchase, -- ADD THIS TO A 'var("conversion_events")' FIELD TO DYNAMICALLY ADD THEM INSTEAD --
-        IF(event_name = 'first_visit', 1, 0) AS is_new_user
+        {{ unnest_by_key('event_params', 'ga_session_id', 'int') }}, -- NEED HERE --
+        {{ unnest_by_key('event_params', 'page_location') }} -- NEED HERE --
     FROM
         joined_base_events
 
@@ -57,7 +39,7 @@ add_user_key AS (
             ELSE NULL -- this case is reached when privacy settings are enabled
         END AS user_key
     FROM
-        unnest_default_event_params
+        unnest_required_event_params
 
 ),
 
@@ -81,6 +63,23 @@ add_session_key AS (
 ),
 
 -- ADD 'page_key' & 'page_number' HERE?? --
+add_page_key AS (
+
+    SELECT
+        *,
+        TO_BASE64(
+            MD5(
+                CONCAT(
+                    CAST(event_date AS STRING),
+                    CAST(EXTRACT(HOUR FROM(SELECT event_timestamp)) AS STRING),
+                    page_location
+                )
+            )
+        ) AS page_key -- Surrogate key for pages.
+    FROM
+        add_session_key
+
+),
 
 -- Add event numbers for each event.
 add_event_number AS (
@@ -92,7 +91,7 @@ add_event_number AS (
             ORDER BY event_timestamp
         ) AS session_event_number -- Chronologically number each event within a session to help generate a unique event key.
     FROM
-        add_session_key
+        add_page_key
 
 ),
 
@@ -129,9 +128,7 @@ add_is_first_last_params AS (
 
 ),
 
--- I WANT EXPLICITLY LIST ALL BASE EVENTS INTIALLY FOR DOWNSTREAM INTERPREBILLITY AND UNNEST THEM TO BE WIDE & DENOMALIZED --
-
--- TODO: UNNEST ALL OTHER DEFAULT REPEATED FIELDS HERE --
+-- TODO: UNNEST ALL OTHER DEFAULT/STATIC REPEATED FIELDS HERE --
 ---------------------------------------------------------
 
 -- INCLUDE 'privacy_info' RECORD FIELD HERE? --
@@ -143,7 +140,7 @@ unnest_device AS (
     SELECT
         *,
 
-        device.category                 AS category, -- RENAME TO 'device_cateogry' or 'device_type' INSTEAD? --
+        device.category                 AS device_category,
         device.mobile_brand_name        AS mobile_brand_name,
         device.mobile_model_name        AS mobile_model_name,
         device.mobile_marketing_name    AS mobile_marketing_name,
@@ -209,10 +206,14 @@ remove_query_params AS (
 ),
 
 -- Enrich params by extracting 'page_hostname' and 'page_query_string' from the 'page_location' URL.
-enrich_params AS (
+enrich_url_params AS (
 
     SELECT
         *,
+
+        -- ADD 'page_path' HERE AS WELL --
+        {{ unnest_by_key('event_params', 'page_title') }},
+        {{ unnest_by_key('event_params', 'page_referrer') }},
         {{ extract_hostname_from_url('page_location') }}           AS page_hostname,
         {{ extract_query_string_from_url('page_location') }}       AS page_query_string,
         CONCAT('/', {{ dbt_utils.get_url_path('page_location') }}) AS page_path
@@ -221,6 +222,4 @@ enrich_params AS (
 
 )
 
--- TODO: ADD THE DYNAMIC UNNESTING OF EVENT PARAMS HERE --
-
-SELECT * FROM enrich_params
+SELECT * FROM enrich_url_params

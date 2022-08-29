@@ -1,0 +1,53 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_device AS (
+
+    SELECT
+        event_key,
+
+        device.category                 AS device_category,
+        device.mobile_brand_name        AS mobile_brand_name,
+        device.mobile_model_name        AS mobile_model_name,
+        device.mobile_marketing_name    AS mobile_marketing_name,
+        device.mobile_os_hardware_model AS mobile_os_hardware_model,
+        device.operating_system         AS operating_system,
+        device.operating_system_version AS operating_system_version,
+        device.vendor_id                AS vendor_id,
+        device.advertising_id           AS advertising_id,
+        device.language                 AS language,
+        device.is_limited_ad_tracking   AS is_limited_ad_tracking,
+        device.time_zone_offset_seconds AS time_zone_offset_seconds,
+        device.web_info.browser         AS browser,
+        device.web_info.browser_version AS browser_version
+    FROM
+        base
+
+),
+
+excluded_device AS (
+
+    SELECT
+        *
+    {% if var('excluded_device', none) is not none -%}
+    EXCEPT (
+        {% for excluded_device in var('excluded_device') -%}
+
+        {{ excluded_device }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_device
+
+)
+
+SELECT * FROM excluded_device

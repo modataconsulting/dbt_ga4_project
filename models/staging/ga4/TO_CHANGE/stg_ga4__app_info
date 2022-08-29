@@ -1,0 +1,44 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_app_info AS (
+
+    SELECT
+        event_key,
+
+        app_info.id              AS id,
+        app_info.version         AS version,
+        app_info.install_store   AS install_store,
+        app_info.firebase_app_id AS firebase_app_id,
+        app_info.install_source  AS install_source
+    FROM
+        base
+
+),
+
+excluded_app_info AS (
+
+    SELECT
+        *
+    {% if var('excluded__app_info', none) is not none -%}
+    EXCEPT (
+        {% for excluded_app_info in var('excluded__app_info') -%}
+
+        {{ excluded_app_info }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_app_info
+
+)
+
+SELECT * FROM excluded_app_info

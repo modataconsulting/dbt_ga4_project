@@ -53,19 +53,19 @@ WITH source AS (
 renamed as (
 
     SELECT 
-        PARSE_DATE('%Y%m%d', event_date) AS event_date,
-        TIMESTAMP_MICROS(event_timestamp) AS event_timestamp,
-        LOWER(REPLACE(TRIM(event_name), ' ', '_')) AS event_name, -- Ensure all event names are snake_cased.
+        PARSE_DATE('%Y%m%d', event_date)                AS event_date,
+        TIMESTAMP_MICROS(event_timestamp)               AS event_timestamp,
+        LOWER(REPLACE(TRIM(event_name), ' ', '_'))      AS event_name, -- Ensure all event names are snake_cased.
         event_params,
-        TIMESTAMP_MICROS(event_previous_timestamp) AS event_previous_timestamp,
-        event_value_in_usd AS event_value,
+        TIMESTAMP_MICROS(event_previous_timestamp)      AS event_previous_timestamp,
+        event_value_in_usd                              AS event_value,
         event_bundle_sequence_id,
         TIMESTAMP_MICROS(event_server_timestamp_offset) AS event_server_timestamp_offset,
         user_id,
         user_pseudo_id,
         privacy_info,
         user_properties,
-        TIMESTAMP_MICROS(user_first_touch_timestamp) AS user_first_touch_timestamp,
+        TIMESTAMP_MICROS(user_first_touch_timestamp)    AS user_first_touch_timestamp,
         user_ltv,
         device,
         geo,
@@ -73,6 +73,7 @@ renamed as (
         traffic_source,
         stream_id,
         platform,
+        event_dimensions,
         ecommerce,
         items
     FROM

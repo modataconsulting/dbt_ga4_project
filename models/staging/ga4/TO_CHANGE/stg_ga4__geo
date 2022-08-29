@@ -1,0 +1,45 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_geo AS (
+
+    SELECT
+        event_key,
+
+        geo.continent     AS continent,
+        geo.sub_continent AS sub_continent,
+        geo.country       AS country,
+        geo.region        AS region,
+        geo.city          AS city,
+        geo.metro         AS metro
+    FROM
+        base
+
+),
+
+excluded_geo AS (
+
+    SELECT
+        *
+    {% if var('excluded_geo', none) is not none -%}
+    EXCEPT (
+        {% for excluded_geo in var('excluded_geo') -%}
+
+        {{ excluded_geo }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_geo
+
+)
+
+SELECT * FROM excluded_geo

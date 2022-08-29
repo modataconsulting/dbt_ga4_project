@@ -39,6 +39,25 @@ unnest_items AS (
         base,
         UNNEST(items) AS items
 
+),
+
+excluded_items AS (
+
+    SELECT
+        *
+    {% if var('excluded_items', none) is not none -%}
+    EXCEPT (
+        {% for excluded_item in var('excluded_items') -%}
+
+        {{ excluded_item }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_items
+
 )
 
-SELECT * FROM unnest_items
+SELECT * FROM excluded_items

@@ -5,26 +5,16 @@ WITH user_scoped_events AS (
 
         {{ get_first('user_key', 'event_date') }}               AS first_seen_date,
         {{ get_first('user_key', 'event_timestamp') }}          AS first_seen_timestamp,
-        {{ get_first('user_key', 'default_channel_grouping') }} AS first_default_channel_grouping,
-        {{ get_first('user_key', 'source') }}                   AS first_source,
-        {{ get_first('user_key', 'medium') }}                   AS first_medium,
-        {{ get_first('user_key', 'campaign') }}                 AS first_campaign,
-        {{ get_first('user_key', 'country') }}                  AS first_country,
-        {{ get_first('user_key', 'city') }}                     AS first_city,
-        {{ get_first('user_key', 'device_category') }}          AS first_device_category,
-        {{ get_first('user_key', 'operating_system') }}         AS first_operating_system,
+        {{ get_first('user_key', 'traffic_source') }}           AS first_traffic_source,
+        {{ get_first('user_key', 'geo') }}                      AS first_geo,
+        {{ get_first('user_key', 'device') }}                   AS first_device,
         {{ get_last('user_key', 'event_date') }}                AS last_seen_date,
         {{ get_last('user_key', 'event_date') }}                AS last_seen_timestamp,
-        {{ get_last('user_key', 'default_channel_grouping') }}  AS last_default_channel_grouping,
-        {{ get_last('user_key', 'source') }}                    AS last_source,
-        {{ get_last('user_key', 'medium') }}                    AS last_medium,
-        {{ get_last('user_key', 'campaign') }}                  AS last_campaign,
-        {{ get_last('user_key', 'country') }}                   AS last_country,
-        {{ get_last('user_key', 'city') }}                      AS last_city,
-        {{ get_last('user_key', 'device_category') }}           AS last_device_category,
-        {{ get_last('user_key', 'operating_system') }}          AS last_operating_system
+        {{ get_last('user_key', 'traffic_source') }}            AS last_traffic_source,
+        {{ get_last('user_key', 'geo') }}                       AS last_geo,
+        {{ get_last('user_key', 'device') }}                    AS last_device
     FROM
-        {{ ref('ga4__events') }} -- MAY BE ABLE TO USE 'ga4_sessions' INSTEAD --
+        {{ ref('ga4__events') }} -- MAY BE ABLE TO/SHOULD USE 'ga4_sessions' INSTEAD --
 
 ),
 
@@ -35,25 +25,15 @@ users AS (
         -- Dimensions --
         user_key,
         MIN(first_seen_date)                AS first_seen_date,
-        MIN(first_seen_timestamp)           AS first_seen_timestamp,
-        MIN(first_default_channel_grouping) AS first_default_channel_grouping,
-        MIN(first_source)                   AS first_source,
-        MIN(first_medium)                   AS first_medium,
-        MIN(first_campaign)                 AS first_campaign,
-        MIN(first_country)                  AS first_country,
-        MIN(first_city)                     AS first_city,
-        MIN(first_device_category)          AS first_device_category,
-        MIN(first_operating_system)         AS first_operating_system,
+        MIN(first_seen_timestamp)           AS first_seen_timestamp,        
+        ANY_VALUE(first_traffic_source)     AS first_traffic_source,
+        ANY_VALUE(first_geo)                AS first_geo,
+        ANY_VALUE(first_device)             AS first_device,
         MAX(last_seen_date)                 AS last_seen_date,
         MAX(last_seen_timestamp)            AS last_seen_timestamp,
-        MAX(last_default_channel_grouping)  AS last_default_channel_grouping,
-        MAX(last_source)                    AS last_source,
-        MAX(last_medium)                    AS last_medium,
-        MAX(last_campaign)                  AS last_campaign,
-        MAX(last_country)                   AS last_country,
-        MAX(last_city)                      AS last_city,
-        MAX(last_device_category)           AS last_device_category,
-        MAX(last_operating_system)          AS last_operating_system,
+        ANY_VALUE(last_traffic_source)      AS last_traffic_source,
+        ANY_VALUE(last_geo)                 AS last_geo,
+        ANY_VALUE(last_device)              AS last_device,
 
         -- Metrics --
         COUNT(DISTINCT session_key) AS lifetime_sessions,

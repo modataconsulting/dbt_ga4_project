@@ -1,0 +1,42 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_privacy_info AS (
+
+    SELECT
+        event_key,
+
+        privacy_info.analytics_storage    AS analytics_storage,
+        privacy_info.ads_storage          AS ads_storage,
+        privacy_info.uses_transient_token AS uses_transient_token
+    FROM
+        base
+
+),
+
+excluded_privacy_info AS (
+
+    SELECT
+        *
+    {% if var('excluded__privacy_info', none) is not none -%}
+    EXCEPT (
+        {% for excluded_privacy_info in var('excluded__privacy_info') -%}
+
+        {{ excluded_privacy_info }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_privacy_info
+
+)
+
+SELECT * FROM excluded_privacy_info

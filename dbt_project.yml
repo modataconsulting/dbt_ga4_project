@@ -10,47 +10,59 @@ profile: 'default' #
 # ==================== #
 # File Path Configs
 # ==================== #
-model-paths: ["models"]
-analysis-paths: ["analyses"]
-test-paths: ["tests"]
-seed-paths: ["seeds"]
-macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
-docs-paths: ["docs"]
-asset-paths: ["assets"]
-#target-path: "target" # directory which will store compiled SQL files
+model-paths: ['models']
+analysis-paths: ['analyses']
+test-paths: ['tests']
+seed-paths: ['seeds']
+macro-paths: ['macros']
+snapshot-paths: ['snapshots']
+docs-paths: ['docs']
+asset-paths: ['assets']
+#target-path: 'target' # directory which will store compiled SQL files
 clean-targets:        # directories to be removed by `dbt clean`
-  - "target"
-  - "dbt_packages"
+  - 'target'
+  - 'dbt_packages'
 
 # ==================== #
 # Run Hooks
 # ==================== #
 # on-run-start:
-#   - "<run_on_start>"
+#   - '<run_on_start>'
 
 # on-run-end:
-#   - "<run_on_end>"
+#   - '<run_on_end>'
 
 # ==================== #
 # Variable Configs
 # ==================== #
 vars:
-  project: "bigquery-public-data"
-  dataset: "ga4_obfuscated_sample_ecommerce"
-  start_date: "20210120" ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
+  project: 'bigquery-public-data'
+  dataset: 'ga4_obfuscated_sample_ecommerce'
+  start_date: '20210120' ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
   conversion_events: ['purchase']
+  
+  # Exclude default columns from appearing in the final 'ga4__events' table.
+  excluded_columns: ['event_previous_timestamp', 'event_bundle_sequence_id', 'event_server_timestamp_offset', 'user_id', 'user_pseudo_id', 'stream_id', 'ga_session_id', 'privacy_info', 'event_dimensions', 'app_info']
 
 # TESTING SOME VARS:
   excluded_events: []
   excluded_event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']
   excluded_user_props: []
+  
+  excluded_items: ['affiliation', 'location_id', 'item_list_id', 'item_list_name', 'item_list_index', 'promotion_id', 'promotion_name', 'creative_name', 'creative_slot']
+  excluded_device: ['mobile_marketing_name', 'mobile_os_hardware_model', 'operating_system_version', 'vendor_id', 'advertising_id', 'is_limited_ad_tracking', 'time_zone_offset_seconds', 'browser_version']
+  excluded_geo: ['continent', 'sub_continent', 'metro']
+  excluded__privacy_info: ['analytics_storage', 'ads_storage', 'uses_transient_token']
+  excluded__user_ltv: ['currency']
+  excluded__app_info: ['id', 'version', 'install_store', 'firebase_app_id', 'install_source']
+  excluded__event_dimensions: ['hostname']
+  excluded__ecommerce: ['transaction_id']
 
 ########################TO DO##############################
 # Query parameter exclusions
 # You can remove specific query parameters from the page_location by listing them here
-#    query_parameter_exclusions: ["gclid","fbclid","_ga"] 
+#    query_parameter_exclusions: ['gclid','fbclid','_ga'] 
 ########################TO DO##############################
 
 # ==================== #

@@ -1,0 +1,46 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_ecommerce AS (
+
+    SELECT
+        event_key,
+
+        ecommerce.total_item_quantity                                           AS total_item_quantity,
+        COALESCE(ecommerce.purchase_revenue_in_usd, ecommerce.purchase_revenue) AS purchase_revenue,
+        COALESCE(ecommerce.refund_value_in_usd, ecommerce.refund_value)         AS refund_value,
+        COALESCE(ecommerce.shipping_value_in_usd, ecommerce.shipping_value)     AS shipping_value,
+        COALESCE(ecommerce.tax_value_in_usd, ecommerce.tax_value)               AS tax_value,
+        ecommerce.unique_items                                                  AS unique_items,
+        ecommerce.transaction_id                                                AS transaction_id
+    FROM
+        base
+
+),
+
+excluded_ecommerce AS (
+
+    SELECT
+        *
+    {% if var('excluded__ecommerce', none) is not none -%}
+    EXCEPT (
+        {% for excluded_ecommerce in var('excluded__ecommerce') -%}
+
+        {{ excluded_ecommerce }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_ecommerce
+
+)
+
+SELECT * FROM excluded_ecommerce

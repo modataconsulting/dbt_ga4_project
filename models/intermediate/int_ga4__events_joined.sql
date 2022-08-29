@@ -4,18 +4,30 @@ WITH events AS (
         *
     EXCEPT (
         event_params,
-        privacy_info,
         user_properties, 
-        user_ltv, 
-        device, 
-        geo, 
-        app_info,
-        traffic_source,
-        ecommerce, 
-        items
+        traffic_source
     )
     FROM
         {{ ref('stg_ga4__events') }}
+
+),
+
+excluded_columns AS (
+
+    SELECT
+        *
+    {% if var('excluded_columns', none) is not none -%}
+    EXCEPT (
+        {% for excluded_column in var('excluded_columns') -%}
+
+        {{ excluded_column }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        events
 
 ),
 
@@ -24,18 +36,8 @@ join_event_params AS (
     SELECT
         *
     FROM
-        events
+        excluded_columns
         LEFT JOIN {{ ref('stg_ga4__event_params') }} USING (event_key)
-
-),
-
-join_items AS (
-
-    SELECT
-        *
-    FROM
-        join_event_params
-        LEFT JOIN {{ ref('stg_ga4__items') }} USING (event_key)
 
 ),
 
@@ -44,7 +46,7 @@ join_user_props AS (
     SELECT
         *
     FROM
-        join_items
+        join_event_params
         LEFT JOIN {{ ref('stg_ga4__user_props') }} USING (event_key)
 
 ),

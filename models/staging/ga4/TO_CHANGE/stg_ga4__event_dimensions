@@ -1,0 +1,40 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_event_dimensions AS (
+
+    SELECT
+        event_key,
+
+        event_dimensions.hostname AS hostname
+    FROM
+        base
+
+),
+
+excluded_event_dimensions AS (
+
+    SELECT
+        *
+    {% if var('excluded__event_dimensions', none) is not none -%}
+    EXCEPT (
+        {% for excluded_event_dimensions in var('excluded__event_dimensions') -%}
+
+        {{ excluded_event_dimensions }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_event_dimensions
+
+)
+
+SELECT * FROM excluded_event_dimensions

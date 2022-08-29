@@ -1,0 +1,41 @@
+WITH base AS (
+
+    SELECT
+        *
+    FROM
+        {{ ref('stg_ga4__events') }}
+
+),
+
+unnest_user_ltv AS (
+
+    SELECT
+        event_key,
+
+        user_ltv.revenue  AS revenue,
+        user_ltv.currency AS currency
+    FROM
+        base
+
+),
+
+excluded_user_ltv AS (
+
+    SELECT
+        *
+    {% if var('excluded__user_ltv', none) is not none -%}
+    EXCEPT (
+        {% for excluded_user_ltv in var('excluded__user_ltv') -%}
+
+        {{ excluded_user_ltv }}
+    
+        {{- "," if not loop.last }}
+        {% endfor %}
+    )
+    {%- endif %}
+    FROM
+        unnest_user_ltv
+
+)
+
+SELECT * FROM excluded_user_ltv

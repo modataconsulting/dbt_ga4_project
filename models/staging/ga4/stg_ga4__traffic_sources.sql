@@ -42,6 +42,22 @@ set_default_channel_grouping AS (
     FROM
         add_source_categories
 
+),
+
+renest_traffic_sources AS (
+
+    SELECT
+        event_key,
+
+        STRUCT(
+            source,
+            medium,
+            campaign,
+            default_channel_grouping
+        ) AS traffic_source
+    FROM
+       set_default_channel_grouping 
+
 )
 
-SELECT * FROM set_default_channel_grouping
+SELECT * FROM renest_traffic_sources

@@ -128,61 +128,6 @@ add_is_first_last_params AS (
 
 ),
 
--- TODO: UNNEST ALL OTHER DEFAULT/STATIC REPEATED FIELDS HERE --
----------------------------------------------------------
-
--- INCLUDE 'privacy_info' RECORD FIELD HERE? --
-
--- INCLUDE 'user_ltv' RECORD FIELD HERE? --
-
-unnest_device AS (
-
-    SELECT
-        *,
-
-        device.category                 AS device_category,
-        device.mobile_brand_name        AS mobile_brand_name,
-        device.mobile_model_name        AS mobile_model_name,
-        device.mobile_marketing_name    AS mobile_marketing_name,
-        device.mobile_os_hardware_model AS mobile_os_hardware_model,
-        device.operating_system         AS operating_system,
-        device.operating_system_version AS operating_system_version,
-        device.vendor_id                AS vendor_id,
-        device.advertising_id           AS advertising_id,
-        device.language                 AS language,
-        device.is_limited_ad_tracking   AS is_limited_ad_tracking,
-        device.time_zone_offset_seconds AS time_zone_offset_seconds,
-        device.web_info.browser         AS browser,
-        device.web_info.browser_version AS browser_version
-    FROM
-        add_is_first_last_params
-
-),
-
-unnest_geo AS (
-
-    SELECT
-        *,
-
-        geo.continent     AS continent,
-        geo.sub_continent AS sub_continent,
-        geo.country       AS country,
-        geo.region        AS region,
-        geo.city          AS city,
-        geo.metro         AS metro
-    FROM
-        unnest_device
-
-),
-
--- INCLUDE 'app_info' RECORD FIELD HERE? --
-
--- INCLUDE 'event_dimensions' RECORD FIELD HERE? --
-
--- INCLUDE 'eccommerce' RECORD FIELD HERE? --
-
----------------------------------------------------------
-
 -- Remove specific query strings from page_location field.
 remove_query_params AS (
 
@@ -201,7 +146,7 @@ remove_query_params AS (
 
         {%- endif %}
     FROM
-        unnest_geo
+        add_is_first_last_params
 
 ),
 
@@ -211,7 +156,6 @@ enrich_url_params AS (
     SELECT
         *,
 
-        -- ADD 'page_path' HERE AS WELL --
         {{ unnest_by_key('event_params', 'page_title') }},
         {{ unnest_by_key('event_params', 'page_referrer') }},
         {{ extract_hostname_from_url('page_location') }}           AS page_hostname,

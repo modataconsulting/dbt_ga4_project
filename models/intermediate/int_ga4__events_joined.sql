@@ -16,9 +16,9 @@ excluded_columns AS (
 
     SELECT
         *
-    {% if var('excluded_columns', none) is not none -%}
+    {% if var('excluded__columns', none) is not none -%}
     EXCEPT (
-        {% for excluded_column in var('excluded_columns') -%}
+        {% for excluded_column in var('excluded__columns') -%}
 
         {{ excluded_column }}
     
@@ -59,16 +59,6 @@ join_traffic_sources AS (
         join_user_props
         LEFT JOIN {{ ref('stg_ga4__traffic_sources') }} USING (event_key)
 
-),
-
-join_conversions AS (
-
-    SELECT
-        *
-    FROM
-        join_traffic_sources
-        LEFT JOIN {{ ref('stg_ga4__conversions') }} USING (event_key)
-
 )
 
-SELECT * FROM join_conversions
+SELECT * FROM join_traffic_sources

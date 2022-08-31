@@ -126,6 +126,8 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 {% docs purchases %} The total number of purchases on your website or application for a user. {% enddocs %}
 
 -- GEO --
+{% docs geo %} The repeated field containing all geo columns. {% enddocs %}
+
 {% docs continent %} The continent from which user activity originated. For example, if someone visits your websites from the United States, the text `Americas` populates the dimension. {% enddocs %}
 
 {% docs sub_continent %} The subcontinent from which user activity originated. For example, if someone visits your website from the United States, the text `Northern America` populates the dimension. {% enddocs %}
@@ -138,6 +140,8 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 ---------------------
 
 ## DEVICE
+{% docs device %} The repeated field containing all device columns. {% enddocs %}
+
 {% docs device_category %} The type of device from which user activity originated. Device categories include `desktop`, `mobile`, and `tablet`. {% enddocs %}
 
 {% docs mobile_brand_name %} The brand name of the mobile device (e.g., Motorola, LG, or Samsung). {% enddocs %}
@@ -168,6 +172,8 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 ---------------------
 
 ## TRAFFIC SOURCE
+{% docs traffic_source %} The repeated field containing all traffic source columns. {% enddocs %}
+
 {% docs medium %} The name of the medium (e.g. `paid search`, `organic search`, `email`, etc.) that first acquired the user. {% enddocs %}
 
 {% docs campaign %} The name of the marketing campaign that first acquired the user. {% enddocs %}
@@ -205,13 +211,15 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 
 {% docs sum_event_value %} The sum of all monetary value parameters supplied with an event for a session. You can use this context-sensitive metric to capture data that's important to you (e.g. `revenue`, `time`, `distance`). {% enddocs %}
 
-{% docs session_engaged %} Whether or not (i.e., `1` or `0`) a session lasted 10 seconds or longer, or had 1 or more conversion events, or 2 or more page or screen views. {% enddocs %}
+{% docs is_engaged_session %} Whether or not (i.e., `1` or `0`) a session lasted 10 seconds or longer, or had 1 or more conversion events, or 2 or more page or screen views. {% enddocs %}
 
 {% docs event_date %} Date of when the associated page was viewed. {% enddocs %}
 
 {% docs hour %} Hour of when the associated page was viewed. {% enddocs %}
 
-{% docs page_location %} The complete URL of the webpage that a user visited on your website. For example, if someone visits www.googlemerchandisestore.com/Bags?theme=1, then the complete URL will populate the dimension. {% enddocs %}
+{% docs original_page_location %} The original complete URL of the webpage that a user visited on your website. For example, if someone visits www.googlemerchandisestore.com/Bags?theme=1, then the complete URL will populate the dimension. {% enddocs %}
+
+{% docs page_location %} The complete URL of the webpage that a user visited on your website, without any query paramaters. {% enddocs %}
 
 {% docs page_title %} The page title that you set on your website. {% enddocs %}
 
@@ -244,6 +252,8 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 {% docs page_referrer %} The first referring URL, which is the user's previous URL and can be your website's domain or other domains. {% enddocs %}
 
 ## ITEMS
+{% docs items %} The repeated field containing all item columns. {% enddocs %}
+
 {% docs item_id %} The ID of the item. {% enddocs %}
 
 {% docs item_name %} The name of the item. {% enddocs %}
@@ -323,3 +333,11 @@ This macro will remove any `query_parameters` from the `URL` that you specify in
 {% docs revenue %} The Lifetime Value (revenue) of the user. {% enddocs %}
 
 {% docs currency %} The Lifetime Value (currency) of the user. This field is not populated in intraday tables. {% enddocs %}
+
+{% docs page_key %} A hashed primary key for each page, which is a combination of `event_date`, `hour`, and `page_location`. {% enddocs %}
+
+{% docs page_hostname %} The hostname portion of `page_location`. {% enddocs %}
+
+{% docs page_query_string %} The query parameters found in `page_location`. {% enddocs %}
+
+{% docs page_path %} The path portion of `page_location`. {% enddocs %}

@@ -30,11 +30,26 @@ sessions AS (
 
         -- Facts/Metrics --
         {{ get_total_duration('engagement_time_msec') }} AS session_duration,
-        COUNTIF(event_name = 'page_view') as page_views,
         MAX(session_event_number) AS session_event_count,
         ROUND(SAFE_DIVIDE(MAX(session_event_number), COUNTIF(event_name = 'page_view')), 2) AS avg_events_per_page,
-        MAX(event_value) AS session_value
-        -- ...[ADD COUNT OF EACH CONVERSION EVENT]... --
+        MAX(event_value) AS session_value,
+
+        STRUCT(
+            {% for engagement_event in get_engagement_events() -%}
+
+            COUNTIF(event_name = '{{ engagement_event['event_name'] }}') AS {{ engagement_event['event_name'] }}s
+        
+            {{- "," if not loop.last }}
+            {% endfor %}
+        ) AS engagement_events,        
+        STRUCT(
+            {% for conversion_event in var('conversion_events') -%}
+
+            COUNTIF(event_name = '{{ conversion_event }}') AS {{ conversion_event }}s
+        
+            {{- "," if not loop.last }}
+            {% endfor %}
+        ) AS conversion_events
     FROM
         session_scoped_events
     GROUP BY

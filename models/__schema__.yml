@@ -338,8 +338,8 @@ models:
       - name: sum_event_value
         description: '{{ doc("sum_event_value") }}'
 
-      - name: session_engaged
-        description: '{{ doc("session_engaged") }}'
+      - name: is_engaged_session
+        description: '{{ doc("is_engaged_session") }}'
 
   # PAGES TABLE #
   - name: ga4__pages
@@ -408,8 +408,17 @@ models:
       - name: event_server_timestamp_offset
         description: '{{ doc("event_server_timestamp_offset") }}'
 
-      - name: session_engaged
-        description: '{{ doc("session_engaged") }}'
+      - name: user_first_touch_timestamp
+        description: '{{ doc("user_first_touch_timestamp") }}'
+
+      - name: is_engaged_session
+        description: '{{ doc("is_engaged_session") }}'
+
+      - name: orginal_page_location
+        description: '{{ doc("original_page_location") }}'
+
+      - name: page_location
+        description: '{{ doc("page_location") }}'
 
       - name: page_title
         description: '{{ doc("page_title") }}'
@@ -417,80 +426,104 @@ models:
       - name: page_referrer
         description: '{{ doc("page_referrer") }}'
 
-      - name: item_id
+      - name: page_hostname
+        description: '{{ doc("page_hostname") }}'
+
+      - name: page_query_string
+        description: '{{ doc("page_query_string") }}'
+
+      - name: page_path
+        description: '{{ doc("page_path") }}'
+
+      - name: ga_session_number
+        description: '{{ doc("ga_session_number") }}'
+
+      - name: items
+        description: '{{ doc("items") }}'
+
+      - name: items.item_id
         description: '{{ doc("item_id") }}'
 
-      - name: item_name
+      - name: items.item_name
         description: '{{ doc("item_name") }}'
 
-      - name: item_brand
+      - name: items.item_brand
         description: '{{ doc("item_brand") }}'
 
-      - name: item_variant
+      - name: items.item_variant
         description: '{{ doc("item_variant") }}'
 
-      - name: item_category
+      - name: items.item_category
         description: '{{ doc("item_category") }}'
 
-      - name: item_category2
+      - name: items.item_category2
         description: '{{ doc("item_category2") }}'
 
-      - name: item_category3
+      - name: items.item_category3
         description: '{{ doc("item_category3") }}'
 
-      - name: item_category4
+      - name: items.item_category4
         description: '{{ doc("item_category4") }}'
 
-      - name: item_category5
+      - name: items.item_category5
         description: '{{ doc("item_category5") }}'
 
-      - name: price_in_usd
+      - name: items.price_in_usd
         description: '{{ doc("price_in_usd") }}'
 
-      - name: price
+      - name: items.price
         description: '{{ doc("price") }}'
 
-      - name: quantity
+      - name: items.quantity
         description: '{{ doc("quantity") }}'
 
-      - name: item_revenue_in_usd
+      - name: items.item_revenue_in_usd
         description: '{{ doc("item_revenue_in_usd") }}'
 
-      - name: item_revenue
+      - name: items.item_revenue
         description: '{{ doc("item_revenue") }}'
 
-      - name: item_refund_in_usd
+      - name: items.item_refund_in_usd
         description: '{{ doc("item_refund_in_usd") }}'
 
-      - name: item_refund
+      - name: items.item_refund
         description: '{{ doc("item_refund") }}'
 
-      - name: coupon
+      - name: items.coupon
         description: '{{ doc("coupon") }}'
 
-      - name: affiliation
+      - name: items.affiliation
         description: '{{ doc("affiliation") }}'
 
-      - name: location_id
+      - name: items.location_id
         description: '{{ doc("location_id") }}'
 
-      - name: item_list_id
+      - name: items.item_list_id
         description: '{{ doc("item_list_id") }}'
 
-      - name: item_list_name
+      - name: items.item_list_name
         description: '{{ doc("item_list_name") }}'
 
-      - name: item_list_index
+      - name: items.item_list_index
         description: '{{ doc("item_list_index") }}'
 
-      - name: promotion_id
+      - name: items.promotion_id
         description: '{{ doc("promotion_id") }}'
 
-      - name: promotion_name
+      - name: items.promotion_name
         description: '{{ doc("promotion_name") }}'
 
-      - name: creative_name
+      - name: items.creative_name
         description: '{{ doc("creative_name") }}'
 
-      - name: creative_slot
+      - name: items.creative_slot
         description: '{{ doc("creative_slot") }}'
+
+      - name: user_key
+        description: '{{ doc("user_key") }}'
+
+      - name: session_key
+        description: '{{ doc("session_key") }}'
+
+      - name: page_key
+        description: '{{ doc("page_key") }}'

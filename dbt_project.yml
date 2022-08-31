@@ -41,23 +41,25 @@ vars:
   start_date: '20210120' ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
   conversion_events: ['purchase']
+  excluded__engagement_events: ['session_start']
+  excluded__event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']
   
   # Exclude default columns from appearing in the final 'ga4__events' table.
-  excluded_columns: ['event_previous_timestamp', 'event_bundle_sequence_id', 'event_server_timestamp_offset', 'user_id', 'user_pseudo_id', 'stream_id', 'ga_session_id', 'privacy_info', 'event_dimensions', 'app_info']
+  excluded__columns: ['event_previous_timestamp', 'event_bundle_sequence_id', 'event_server_timestamp_offset', 'user_id', 'user_pseudo_id', 'stream_id', 'ga_session_id', 'privacy_info', 'event_dimensions', 'app_info']
 
 # TESTING SOME VARS:
-  excluded_events: []
-  excluded_event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']
-  excluded_user_props: []
+  excluded__user_props: []
   
-  excluded_items: ['affiliation', 'location_id', 'item_list_id', 'item_list_name', 'item_list_index', 'promotion_id', 'promotion_name', 'creative_name', 'creative_slot']
-  excluded_device: ['mobile_marketing_name', 'mobile_os_hardware_model', 'operating_system_version', 'vendor_id', 'advertising_id', 'is_limited_ad_tracking', 'time_zone_offset_seconds', 'browser_version']
-  excluded_geo: ['continent', 'sub_continent', 'metro']
-  excluded__privacy_info: ['analytics_storage', 'ads_storage', 'uses_transient_token']
-  excluded__user_ltv: ['currency']
-  excluded__app_info: ['id', 'version', 'install_store', 'firebase_app_id', 'install_source']
-  excluded__event_dimensions: ['hostname']
-  excluded__ecommerce: ['transaction_id']
+  # excluded__items: ['affiliation', 'location_id', 'item_list_id', 'item_list_name', 'item_list_index', 'promotion_id', 'promotion_name', 'creative_name', 'creative_slot']
+  # excluded__device: ['mobile_marketing_name', 'mobile_os_hardware_model', 'operating_system_version', 'vendor_id', 'advertising_id', 'is_limited_ad_tracking', 'time_zone_offset_seconds']
+  # excluded__geo: ['continent', 'sub_continent', 'metro']
+  # excluded__privacy_info: ['analytics_storage', 'ads_storage', 'uses_transient_token']
+  # excluded__user_ltv: ['currency']
+  # excluded__app_info: ['id', 'version', 'install_store', 'firebase_app_id', 'install_source']
+  # excluded__event_dimensions: ['hostname']
+  # excluded__ecommerce: ['transaction_id']
+
+  funnel_steps: []
 
 ########################TO DO##############################
 # Query parameter exclusions

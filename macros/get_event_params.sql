@@ -15,7 +15,7 @@
         {{ ref('stg_ga4__events') }},
         UNNEST(event_params) AS event_params
     WHERE
-        event_params.key NOT IN UNNEST({{ var('excluded_event_params') }})
+        event_params.key NOT IN UNNEST({{ var('excluded__event_params') }})
         AND (
             event_params.value.string_value IS NOT NULL
             OR event_params.value.int_value IS NOT NULL

@@ -17,7 +17,7 @@
         {{ ref('stg_ga4__events') }},
         UNNEST(user_properties) AS user_props
     WHERE
-        user_props.key NOT IN UNNEST({{ var('excluded_user_props') }})
+        user_props.key NOT IN UNNEST({{ var('excluded__user_props') }})
         AND (
             user_props.value.string_value IS NOT NULL
             OR user_props.value.int_value IS NOT NULL

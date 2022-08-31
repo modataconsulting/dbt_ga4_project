@@ -1,3 +1,14 @@
+{{
+    config(
+        materialized = 'incremental',
+        incremental_strategy = 'insert_overwrite',
+        partition_by = {
+            "field": "first_seen_date",
+            "data_type": "date"
+        },
+    )
+}}
+
 WITH users AS (
 
     SELECT

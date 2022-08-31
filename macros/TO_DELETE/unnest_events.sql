@@ -86,7 +86,7 @@
 
 
 -- NEW MACRO TEST TO SET AS A VARIABLE INSTEAD --
-{% macro get_event_names() %}
+{% macro get_events() %}
 
     SELECT DISTINCT
         event_name

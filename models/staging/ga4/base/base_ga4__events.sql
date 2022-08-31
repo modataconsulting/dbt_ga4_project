@@ -1,9 +1,11 @@
 {%- if var('static_incremental_days', false) -%}
+
     {% set partitions_to_replace = [] %}
     
     {% for i in range(var('static_incremental_days')) %}
         {% set partitions_to_replace = partitions_to_replace.append('date_sub(current_date, interval ' + (i+1)|string + ' day)') %}
     {% endfor %}
+    
     {{
         config(
             materialized = 'incremental',
@@ -15,7 +17,9 @@
             partitions = partitions_to_replace,
         )
     }}
+
 {%- else -%}
+
     {{
         config(
             materialized = 'incremental',
@@ -26,10 +30,10 @@
             },
         )
     }}
+
 {%- endif -%}
 
 -- BigQuery does not cache wildcard queries that scan across sharded tables which means it's best to materialize the raw event data as a partitioned table so that future queries benefit from caching.
-
 WITH source AS (
 
     SELECT 

@@ -1,13 +1,4 @@
-WITH base AS (
-
-    SELECT
-        *
-    FROM
-        {{ ref('stg_ga4__events') }}
-
-),
-
-unnest_traffic_sources AS (
+WITH unnest_traffic_sources AS (
 
     SELECT
         event_key,
@@ -15,7 +6,7 @@ unnest_traffic_sources AS (
         traffic_source.name   AS campaign,
         traffic_source.source AS source
     FROM
-        base
+        {{ ref('stg_ga4__events') }}
 
 ),
 

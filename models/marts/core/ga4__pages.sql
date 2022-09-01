@@ -6,6 +6,7 @@
             "field": "page_date",
             "data_type": "date"
         },
+        cluster_by = "page_path"
     )
 }}
 

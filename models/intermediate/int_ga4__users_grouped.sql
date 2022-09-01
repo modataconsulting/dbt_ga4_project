@@ -40,13 +40,18 @@ users AS (
         ) AS user_last,
 
         -- Metrics --
-        COUNT(DISTINCT session_key) AS lifetime_sessions,
-        -- AS lifetime_engaged_sessions,
-        {{ get_total_duration('engagement_time_msec') }} AS lifetime_session_duration,
-        -- AS avg_session_duration, -- NEED TO FIX THIS --
-        -- SUM(MAX(session_event_number)) AS lifetime_event_count,
-        -- ROUND(SAFE_DIVIDE(SUM(MAX(session_event_number)), SUM(is_page_view)), 2) AS avg_events_per_page,
-        SUM(event_value) AS lifetime_value,
+        COUNT(DISTINCT session_key)                                           AS lifetime_sessions,
+        COUNT(DISTINCT CASE WHEN is_engaged_session = 1 THEN session_key END) AS lifetime_engaged_sessions,
+        ROUND(
+            (COUNT(DISTINCT CASE WHEN is_engaged_session = 1 THEN session_key END) /
+            COUNT(DISTINCT session_key)) * 100, 2
+        )                                                                     AS lifetime_engagement_rate,
+        {{ get_total_duration('engagement_time_msec') }}                      AS lifetime_session_duration,
+        {{ get_avg_duration('engagement_time_msec') }}                        AS avg_session_duration,
+        COUNT(event_name)                                                     AS lifetime_events,
+        ROUND(COUNT(event_name) / COUNT(DISTINCT session_key), 2)             AS avg_events_per_session,
+        -- ROUND(COUNT(event_name) / COUNTIF(event_name = 'page_view'), 2)       AS avg_events_per_page,
+        SUM(event_value)                                                      AS lifetime_value,
 
         STRUCT(
             {% for engagement_event in get_engagement_events() -%}

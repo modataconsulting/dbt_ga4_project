@@ -8,7 +8,7 @@ This project uses [Google Analytics 4 BigQuery Exports](https://support.google.c
 Find more info about Google Analytics 4 BigQuery Exports [here](https://developers.google.com/analytics/bigquery).
 
 **Features Overview:**
-- Four final tables--`ga4__events`, `ga4__pages`, `ga4__sesssions`, and `ga4__users`--that are completed unnested to be wide & denomalized for easy querying by the end-user.
+- Four final tables—`ga4__events`, `ga4__pages`, `ga4__sesssions`, and `ga4__users`—that are completed unnested to be wide & denomalized for easy querying by the end-user.
 - Conversion of the the day-shared `events_YYYYMMDD` & `events_intraday_YYYYMMDD` tables into singular date-partitionioned incremental base models.
 - Extracted URL `query_params`, such as `gclid`, `fbclid`, other UTMs.
 - Custom `Variables`. See [here](#optional-variables) for more info.

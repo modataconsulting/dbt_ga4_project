@@ -10,12 +10,12 @@
 
 {%- endmacro -%}
 
-{%- macro get_avg_duration(duration_column) -%}
+{%- macro get_avg_duration(duration_column, over_column = 'session_key') -%}
 
     CAST(
         CAST(
             ROUND(
-                AVG({{ duration_column }} / 1000)
+                SUM({{ duration_column }} / 1000) / COUNT(DISTINCT {{ over_column }})
             )
         AS STRING)
     AS TIME FORMAT 'SSSSS')

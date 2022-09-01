@@ -6,6 +6,7 @@
             "field": "first_seen_date",
             "data_type": "date"
         },
+        cluster_by = "last_seen_date",
     )
 }}
 

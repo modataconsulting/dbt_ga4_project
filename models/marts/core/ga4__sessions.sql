@@ -6,6 +6,7 @@
             "field": "session_date",
             "data_type": "date"
         },
+        cluster_by = "user_key"
     )
 }}
 

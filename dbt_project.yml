@@ -38,11 +38,11 @@ clean-targets:        # directories to be removed by `dbt clean`
 vars:
   project: 'bigquery-public-data'
   dataset: 'ga4_obfuscated_sample_ecommerce'
-  start_date: '20210120' ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
+  start_date: '20201101' ## CHANGE TO YYYY-MM-DD FORMAT AND SWITCH CASTING IN BASE MODEL ##
 
   conversion_events: ['purchase']
   excluded__engagement_events: ['session_start']
-  excluded__event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name']
+  excluded__event_params: ['ga_session_id', 'page_location', 'ga_session_number', 'session_engaged', 'engagement_time_msec', 'entrances', 'page_title', 'page_referrer', 'source', 'medium', 'campaign', 'debug_mode', 'term', 'clean_event', 'value', 'tax', 'coupon', 'promotion_name', 'transaction_id']
   
   # Exclude default columns from appearing in the final 'ga4__events' table.
   excluded__columns: ['event_previous_timestamp', 'event_bundle_sequence_id', 'event_server_timestamp_offset', 'user_id', 'user_pseudo_id', 'stream_id', 'ga_session_id', 'privacy_info', 'event_dimensions', 'app_info']

@@ -25,14 +25,14 @@ sessions AS (
         ANY_VALUE(traffic_source)     AS traffic_source,
         ANY_VALUE(geo)                AS geo,
         ANY_VALUE(device)             AS device,
-        -- [TODO] AS user_props,
-        -- [TODO] AS event_params,
+        -- ANY_VALUE(user_props)         AS user_props,
+        -- ANY_VALUE(event_params)       AS event_params,
 
         -- Facts/Metrics --
-        {{ get_total_duration('engagement_time_msec') }} AS session_duration,
-        MAX(session_event_number) AS session_event_count,
+        {{ get_total_duration('engagement_time_msec') }}                                    AS session_duration,
+        MAX(session_event_number)                                                           AS session_event_count,
         ROUND(SAFE_DIVIDE(MAX(session_event_number), COUNTIF(event_name = 'page_view')), 2) AS avg_events_per_page,
-        MAX(event_value) AS session_value,
+        MAX(event_value)                                                                    AS session_value,
 
         STRUCT(
             {% for engagement_event in get_engagement_events() -%}

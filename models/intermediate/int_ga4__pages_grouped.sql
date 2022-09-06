@@ -21,14 +21,28 @@ WITH page_views AS (
         {{ get_total_duration('engagement_time_msec') }}                                      AS total_engagement_duration,
         {{ get_avg_duration('engagement_time_msec') }}                                        AS avg_engagement_duration,
 
+        -- Struct of all events, except those set in the `var('excluded__events')` --
         STRUCT(
-            {% for engagement_event in get_engagement_events() -%}
+            {% for event in get_events() -%}
 
-            COUNTIF(event_name = '{{ engagement_event['event_name'] }}') AS {{ engagement_event['event_name'] }}s
+            COUNTIF(event_name = '{{ event['event_name'] }}') AS {{ event['event_name'] }}s
         
             {{- "," if not loop.last }}
             {% endfor %}
-        ) AS engagement_events,
+        ) AS events,
+
+        -- Struct of the events set in the `var('consideration_events')` --
+        STRUCT(
+            {% for consideration_event in var('consideration_events') -%}
+
+            COUNTIF(event_name = '{{ consideration_event }}') AS {{ consideration_event }}s
+        
+            {{- "," if not loop.last }}
+            {% endfor %}
+
+        ) AS consideration_events,
+
+        -- Struct of the events set in the `var('conversion_events')` --
         STRUCT(
             {% for conversion_event in var('conversion_events') -%}
 

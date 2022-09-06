@@ -34,14 +34,36 @@ sessions AS (
         ROUND(SAFE_DIVIDE(MAX(session_event_number), COUNTIF(event_name = 'page_view')), 2) AS avg_events_per_page,
         MAX(event_value)                                                                    AS session_value,
 
-        STRUCT(
-            {% for engagement_event in get_engagement_events() -%}
+        -- Funnel Score Test --
+        ROUND(
+            SAFE_DIVIDE(
+                COUNT(DISTINCT IF(event_name IN UNNEST({{ var('funnel_stages') }}), event_name, NULL)),
+                ARRAY_LENGTH({{ var('funnel_stages') }})
+            ), 2
+        ) AS funnel_score,
 
-            COUNTIF(event_name = '{{ engagement_event['event_name'] }}') AS {{ engagement_event['event_name'] }}s
+        -- Struct of all events, except those set in the `var('excluded__events')` --
+        STRUCT(
+            {% for event in get_events() -%}
+
+            COUNTIF(event_name = '{{ event['event_name'] }}') AS {{ event['event_name'] }}s
         
             {{- "," if not loop.last }}
             {% endfor %}
-        ) AS engagement_events,        
+        ) AS events,
+
+        -- Struct of the events set in the `var('consideration_events')` --
+        STRUCT(
+            {% for consideration_event in var('consideration_events') -%}
+
+            COUNTIF(event_name = '{{ consideration_event }}') AS {{ consideration_event }}s
+        
+            {{- "," if not loop.last }}
+            {% endfor %}
+
+        ) AS consideration_events,
+
+        -- Struct of the events set in the `var('conversion_events')` --
         STRUCT(
             {% for conversion_event in var('conversion_events') -%}
 
@@ -49,6 +71,7 @@ sessions AS (
         
             {{- "," if not loop.last }}
             {% endfor %}
+
         ) AS conversion_events
     FROM
         session_scoped_events

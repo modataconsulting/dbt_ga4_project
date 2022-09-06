@@ -120,9 +120,9 @@ add_is_first_last_params AS (
         *,
 
         IF({{ get_first('session_key', 'event_key') }} = event_key, 1, 0) AS is_first_session_event,
-        IF({{ get_last('session_key', 'event_key') }} = event_key, 1, 0) AS is_last_session_event,
-        IF({{ get_first('user_key', 'event_key') }} = event_key, 1, 0) AS is_first_user_event,
-        IF({{ get_last('user_key', 'event_key') }} = event_key, 1, 0) AS is_last_user_event,
+        IF({{ get_last('session_key', 'event_key') }} = event_key, 1, 0)  AS is_last_session_event,
+        IF({{ get_first('user_key', 'event_key') }} = event_key, 1, 0)    AS is_first_user_event,
+        IF({{ get_last('user_key', 'event_key') }} = event_key, 1, 0)     AS is_last_user_event
     FROM
         add_event_key
 

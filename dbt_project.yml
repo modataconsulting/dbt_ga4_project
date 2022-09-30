@@ -1,0 +1,116 @@
+# ==================== #
+# Project Details
+# ==================== #
+name: "dbt_ga4"
+version: "1.0.0"
+config-version: 2
+profile: "default"
+# require-dbt-version: <dbt_version> # Optionally set a specific dbt version.
+
+# ==================== #
+# File Path Configs
+# ==================== #
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+docs-paths: ["docs"]
+asset-paths: ["assets"]
+#target-path: 'target' # Directory which will store compiled SQL files.
+clean-targets: # Directories to be removed by `dbt clean`.
+  - "target"
+  - "dbt_packages"
+
+# ==================== #
+# Run Hooks
+# ==================== #
+# on-run-start:
+#   - '<run_on_start>'
+
+# on-run-end:
+#   - '<run_on_end>'
+
+# ==================== #
+# Variable Configs
+# ==================== #
+vars:
+  project: "bigquery-public-data"
+  dataset: "ga4_obfuscated_sample_ecommerce"
+  start_date: "20201101"
+
+  # Set specfic events to be conversion or consideration events.
+  conversion_events: ["purchase"]
+  consideration_events: ["view_search_results", "add_to_cart"]
+
+  # Exclude specific events and event parameters from the final tables.
+  excluded__events: ["session_start"]
+  excluded__event_params:
+    [
+      "ga_session_id",
+      "page_location",
+      "ga_session_number",
+      "session_engaged",
+      "engagement_time_msec",
+      "entrances",
+      "page_title",
+      "page_referrer",
+    ]
+
+  # Exclude specific default columns from the final tables.
+  excluded__columns:
+    [
+      "event_previous_timestamp",
+      "event_bundle_sequence_id",
+      "event_server_timestamp_offset",
+      "user_id",
+      "user_pseudo_id",
+      "stream_id",
+      "ga_session_id",
+      "privacy_info",
+      "event_dimensions",
+      "app_info",
+    ]
+
+  # Exclude specific user properties from the final tables.
+  excluded__user_props: []
+
+  # Include specific query parameters to be in the final tables.
+  included__query_params:
+    [
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_content",
+      "utm_term",
+      "gclid",
+      "fbclid",
+      "gclsrc",
+      "_ga",
+    ]
+
+  # TESTING SOME VARS:
+
+  # Set specific events to be considered in a funnel.
+  funnel_stages:
+    ["begin_checkout", "add_shipping_info", "add_payment_info", "purchase"]
+
+########################TO DO##############################
+# Query parameter exclusions
+# You can remove specific query parameters from the page_location by listing them here
+#    query_parameter_exclusions: ['gclid','fbclid','_ga']
+########################TO DO##############################
+
+# ==================== #
+# Model Configs
+# ==================== #
+models:
+  dbt_ga4:
+    +materialized: view
+    +persist_docs:
+      relation: true
+      columns: true
+
+    marts:
+      +materialized: table

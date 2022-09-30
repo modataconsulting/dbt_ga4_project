@@ -1,0 +1,589 @@
+version: 2
+
+sources:
+  - name: ga4
+    database: "{{ var('project') }}" 
+    schema: "{{ var('dataset') }}" 
+    tables:
+      - name: events
+        identifier: events_* # Scans across all sharded event tables. Use the 'start_date' variable in `dbt_project.yml` file to limit this scan.
+        description: '{{ doc("events") }}'
+      
+      - name: events_intraday
+        identifier: events_intraday_*
+        description: '{{ doc("events_intraday") }}'
+
+models:  
+  - name: base_ga4__events
+    description: '{{ doc("base_ga4__events") }}'
+
+  - name: base_ga4__events_intraday
+    description: '{{ doc("base_ga4__events_intraday") }}'
+
+  - name: stg_ga4__query_params
+    description: '{{ doc("stg_ga4__query_params") }}'
+
+  - name: stg_ga4__events
+    description: '{{ doc("stg_ga4__events") }}'
+    columns:
+      - name: event_key
+        tests:
+          - unique
+
+  - name: stg_ga4__items
+    description: '{{ doc("stg_ga4__items") }}'
+
+  - name: stg_ga4__traffic_sources
+    description: '{{ doc("stg_ga4__traffic_sources") }}'
+
+  # USERS TABLE #
+  - name: ga4__users
+    description: '{{ doc("ga4__users") }}'
+    columns:
+      - name: user_key
+        description: '{{ doc("user_key") }}'
+        tests:
+          - unique
+
+      - name: first_seen_timestamp
+        description: '{{ doc("first_seen_timestamp") }}'
+
+      - name: first_seen_date
+        description: '{{ doc("first_seen_date") }}'
+
+      - name: last_seen_timestamp
+        description: '{{ doc("last_seen_timestamp") }}'
+
+      - name: last_seen_date
+        description: '{{ doc("last_seen_date") }}'
+
+      - name: sessions
+        description: '{{ doc("sessions") }}'
+
+      - name: page_views
+        description: '{{ doc("page_views") }}'
+
+      - name: purchases
+        description: '{{ doc("purchases") }}'
+
+      # FIRST_GEO #
+      - name: continent
+        description: '{{ doc("continent") }}'
+
+      - name: sub_continent
+        description: '{{ doc("sub_continent") }}'
+
+      - name: country
+        description: '{{ doc("country") }}'
+
+      - name: region
+        description: '{{ doc("region") }}'
+
+      - name: city
+        description: '{{ doc("city") }}'
+
+      # FIRST_DEVICE #
+      - name: category
+        description: '{{ doc("category") }}'
+
+      - name: mobile_brand_name
+        description: '{{ doc("mobile_brand_name") }}'
+
+      - name: mobile_model_name
+        description: '{{ doc("mobile_model_name") }}'
+
+      - name: mobile_marketing_name
+        description: '{{ doc("mobile_marketing_name") }}'
+
+      - name: mobile_os_hardware_model
+        description: '{{ doc("mobile_os_hardware_model") }}'
+
+      - name: operating_system
+        description: '{{ doc("operating_system") }}'
+
+      - name: operating_system_version
+        description: '{{ doc("operating_system_version") }}'
+
+      - name: vendor_id
+        description: '{{ doc("vendor_id") }}'
+
+      - name: advertising_id
+        description: '{{ doc("advertising_id") }}'
+
+      - name: language
+        description: '{{ doc("language") }}'
+
+      - name: is_limiting_ad_tracking
+        description: '{{ doc("is_limiting_ad_tracking") }}'
+
+      - name: time_zone_offset_seconds
+        description: '{{ doc("time_zone_offset_seconds") }}'
+
+      - name: browser
+        description: '{{ doc("browser") }}'
+
+      - name: browser_version
+        description: '{{ doc("browser_version") }}'
+
+      # FIRST_TRAFFIC_SOURCE #
+      - name: medium
+        description: '{{ doc("medium") }}'
+
+      - name: campaign
+        description: '{{ doc("campaign") }}'
+
+      - name: source
+        description: '{{ doc("source") }}'
+
+      # LAST_GEO #
+      - name: continent
+        description: '{{ doc("continent") }}'
+
+      - name: sub_continent
+        description: '{{ doc("sub_continent") }}'
+
+      - name: country
+        description: '{{ doc("country") }}'
+
+      - name: region
+        description: '{{ doc("region") }}'
+
+      - name: city
+        description: '{{ doc("city") }}'
+
+      # LAST_DEVICE #
+      - name: category
+        description: '{{ doc("category") }}'
+
+      - name: mobile_brand_name
+        description: '{{ doc("mobile_brand_name") }}'
+
+      - name: mobile_model_name
+        description: '{{ doc("mobile_model_name") }}'
+
+      - name: mobile_marketing_name
+        description: '{{ doc("mobile_marketing_name") }}'
+
+      - name: mobile_os_hardware_model
+        description: '{{ doc("mobile_os_hardware_model") }}'
+
+      - name: operating_system
+        description: '{{ doc("operating_system") }}'
+
+      - name: operating_system_version
+        description: '{{ doc("operating_system_version") }}'
+
+      - name: vendor_id
+        description: '{{ doc("vendor_id") }}'
+
+      - name: advertising_id
+        description: '{{ doc("advertising_id") }}'
+
+      - name: language
+        description: '{{ doc("language") }}'
+
+      - name: is_limiting_ad_tracking
+        description: '{{ doc("is_limiting_ad_tracking") }}'
+
+      - name: time_zone_offset_seconds
+        description: '{{ doc("time_zone_offset_seconds") }}'
+
+      - name: browser
+        description: '{{ doc("browser") }}'
+
+      - name: browser_version
+        description: '{{ doc("browser_version") }}'
+
+      # LAST_TRAFFIC_SOURCE #
+      - name: medium
+        description: '{{ doc("medium") }}'
+
+      - name: campaign
+        description: '{{ doc("campaign") }}'
+
+      - name: source
+        description: '{{ doc("source") }}'
+
+      #########################
+      - name: first_page_location
+        description: '{{ doc("first_page_location") }}'
+
+      - name: first_page_hostname
+        description: '{{ doc("first_page_hostname") }}'
+
+      - name: first_page_referrer
+        description: '{{ doc("first_page_referrer") }}'
+
+      - name: last_page_location
+        description: '{{ doc("last_page_location") }}'
+
+      - name: last_page_hostname
+        description: '{{ doc("last_page_hostname") }}'
+
+      - name: last_page_referrer
+        description: '{{ doc("last_page_referrer") }}'
+
+  # SESSIONS TABLE #
+  - name: ga4__sessions
+    description: '{{ doc("ga4__sessions") }}'
+    columns:
+      - name: session_key
+        description: '{{ doc("session_key") }}'
+        tests:
+          - unique
+
+      - name: ga_session_number
+        description: '{{ doc("ga_session_number") }}'
+
+      - name: landing_page
+        description: '{{ doc("landing_page") }}'
+
+      - name: landing_page_hostname
+        description: '{{ doc("landing_page_hostname") }}'
+
+      # GEO #
+      - name: continent
+        description: '{{ doc("continent") }}'
+
+      - name: sub_continent
+        description: '{{ doc("sub_continent") }}'
+
+      - name: country
+        description: '{{ doc("country") }}'
+
+      - name: region
+        description: '{{ doc("region") }}'
+
+      - name: city
+        description: '{{ doc("city") }}'
+
+      # DEVICE #
+      - name: category
+        description: '{{ doc("category") }}'
+
+      - name: mobile_brand_name
+        description: '{{ doc("mobile_brand_name") }}'
+
+      - name: mobile_model_name
+        description: '{{ doc("mobile_model_name") }}'
+
+      - name: mobile_marketing_name
+        description: '{{ doc("mobile_marketing_name") }}'
+
+      - name: mobile_os_hardware_model
+        description: '{{ doc("mobile_os_hardware_model") }}'
+
+      - name: operating_system
+        description: '{{ doc("operating_system") }}'
+
+      - name: operating_system_version
+        description: '{{ doc("operating_system_version") }}'
+
+      - name: vendor_id
+        description: '{{ doc("vendor_id") }}'
+
+      - name: advertising_id
+        description: '{{ doc("advertising_id") }}'
+
+      - name: language
+        description: '{{ doc("language") }}'
+
+      - name: is_limiting_ad_tracking
+        description: '{{ doc("is_limiting_ad_tracking") }}'
+
+      - name: time_zone_offset_seconds
+        description: '{{ doc("time_zone_offset_seconds") }}'
+
+      - name: browser
+        description: '{{ doc("browser") }}'
+
+      - name: browser_version
+        description: '{{ doc("browser_version") }}'
+
+      # TRAFFIC_SOURCE #
+      - name: medium
+        description: '{{ doc("medium") }}'
+
+      - name: campaign
+        description: '{{ doc("campaign") }}'
+
+      - name: source
+        description: '{{ doc("source") }}'
+
+      #########################
+      - name: row_num
+        description: '{{ doc("row_num") }}'
+
+      - name: source
+        description: '{{ doc("source") }}'
+
+      - name: medium
+        description: '{{ doc("medium") }}'
+
+      - name: default_channel_grouping
+        description: '{{ doc("default_channel_grouping") }}'
+
+      - name: user_key
+        description: '{{ doc("user_key") }}'
+
+      - name: session_start_date
+        description: '{{ doc("session_start_date") }}'
+
+      - name: session_start_timestamp
+        description: '{{ doc("session_start_timestamp") }}'
+
+      - name: page_views
+        description: '{{ doc("page_views") }}'
+
+      - name: sum_event_value
+        description: '{{ doc("sum_event_value") }}'
+
+      - name: is_engaged_session
+        description: '{{ doc("is_engaged_session") }}'
+
+  # PAGES TABLE #
+  - name: ga4__pages
+    description: '{{ doc("ga4__pages") }}'
+    columns:
+      - name: event_date
+        description: '{{ doc("event_date") }}'
+
+      - name: hour
+        description: '{{ doc("hour") }}'
+
+      - name: page_location
+        description: '{{ doc("page_location") }}'
+
+      - name: page_title
+        description: '{{ doc("page_title") }}'
+
+      - name: page_views
+        description: '{{ doc("page_views") }}'
+
+      - name: users
+        description: '{{ doc("users") }}'
+
+      - name: new_users
+        description: '{{ doc("new_users") }}'
+
+      - name: entrances
+        description: '{{ doc("entrances") }}'
+
+      - name: exits
+        description: '{{ doc("exits") }}'
+
+      - name: total_engagement_duration
+        description: '{{ doc("total_engagement_duration") }}'
+
+      - name: scroll_events
+        description: '{{ doc("scroll_events") }}'
+
+  # EVENTS TABLE #
+  - name: ga4__events
+    description: '{{ doc("ga4__events") }}'
+    columns:
+      - name: event_key
+        description: '{{ doc("event_key") }}'
+        tests:
+          - unique
+
+      - name: event_date
+        description: '{{ doc("event_date") }}'
+
+      - name: event_timestamp
+        description: '{{ doc("event_timestamp") }}'
+
+      - name: event_name
+        description: '{{ doc("event_name") }}'
+
+      - name: event_previous_timestamp
+        description: '{{ doc("event_previous_timestamp") }}'
+
+      - name: event_value
+        description: '{{ doc("event_value") }}'
+
+      - name: event_bundle_sequence_id
+        description: '{{ doc("event_bundle_sequence_id") }}'
+
+      - name: event_server_timestamp_offset
+        description: '{{ doc("event_server_timestamp_offset") }}'
+
+      - name: user_first_touch_timestamp
+        description: '{{ doc("user_first_touch_timestamp") }}'
+
+      - name: is_engaged_session
+        description: '{{ doc("is_engaged_session") }}'
+
+      - name: original_page_location
+        description: '{{ doc("original_page_location") }}'
+
+      - name: page_location
+        description: '{{ doc("page_location") }}'
+
+      - name: page_title
+        description: '{{ doc("page_title") }}'
+
+      - name: page_referrer
+        description: '{{ doc("page_referrer") }}'
+
+      - name: page_hostname
+        description: '{{ doc("page_hostname") }}'
+
+      - name: page_query_string
+        description: '{{ doc("page_query_string") }}'
+
+      - name: page_path
+        description: '{{ doc("page_path") }}'
+
+      - name: ga_session_number
+        description: '{{ doc("ga_session_number") }}'
+
+      - name: items
+        description: '{{ doc("items") }}'
+
+      - name: items.item_id
+        description: '{{ doc("item_id") }}'
+
+      - name: items.item_name
+        description: '{{ doc("item_name") }}'
+
+      - name: items.item_brand
+        description: '{{ doc("item_brand") }}'
+
+      - name: items.item_variant
+        description: '{{ doc("item_variant") }}'
+
+      - name: items.item_category
+        description: '{{ doc("item_category") }}'
+
+      - name: items.item_category2
+        description: '{{ doc("item_category2") }}'
+
+      - name: items.item_category3
+        description: '{{ doc("item_category3") }}'
+
+      - name: items.item_category4
+        description: '{{ doc("item_category4") }}'
+
+      - name: items.item_category5
+        description: '{{ doc("item_category5") }}'
+
+      - name: items.price_in_usd
+        description: '{{ doc("price_in_usd") }}'
+
+      - name: items.price
+        description: '{{ doc("price") }}'
+
+      - name: items.quantity
+        description: '{{ doc("quantity") }}'
+
+      - name: items.item_revenue_in_usd
+        description: '{{ doc("item_revenue_in_usd") }}'
+
+      - name: items.item_revenue
+        description: '{{ doc("item_revenue") }}'
+
+      - name: items.item_refund_in_usd
+        description: '{{ doc("item_refund_in_usd") }}'
+
+      - name: items.item_refund
+        description: '{{ doc("item_refund") }}'
+
+      - name: items.coupon
+        description: '{{ doc("coupon") }}'
+
+      - name: items.affiliation
+        description: '{{ doc("affiliation") }}'
+
+      - name: items.location_id
+        description: '{{ doc("location_id") }}'
+
+      - name: items.item_list_id
+        description: '{{ doc("item_list_id") }}'
+
+      - name: items.item_list_name
+        description: '{{ doc("item_list_name") }}'
+
+      - name: items.item_list_index
+        description: '{{ doc("item_list_index") }}'
+
+      - name: items.promotion_id
+        description: '{{ doc("promotion_id") }}'
+
+      - name: items.promotion_name
+        description: '{{ doc("promotion_name") }}'
+
+      - name: items.creative_name
+        description: '{{ doc("creative_name") }}'
+
+      - name: items.creative_slot
+        description: '{{ doc("creative_slot") }}'
+
+      - name: user_key
+        description: '{{ doc("user_key") }}'
+
+      - name: session_key
+        description: '{{ doc("session_key") }}'
+
+      - name: page_key
+        description: '{{ doc("page_key") }}'
+
+      - name: session_event_number
+        description: '{{ doc("session_event_number") }}'
+
+      - name: is_first_session_event
+        description: '{{ doc("is_first_session_event") }}'
+
+      - name: is_last_session_event
+        description: '{{ doc("is_last_session_event") }}'
+
+      - name: is_first_user_event
+        description: '{{ doc("is_first_user_event") }}'
+
+      - name: is_last_user_event
+        description: '{{ doc("is_last_user_event") }}'
+
+      - name: is_entrance
+        description: '{{ doc("is_entrance") }}'
+
+      - name: is_exit
+        description: '{{ doc("is_exit") }}'
+
+      - name: is_new_user
+        description: '{{ doc("is_new_user") }}'
+
+      - name: user_ltv
+        description: '{{ doc("user_ltv") }}'
+
+      - name: device
+        description: '{{ doc("device") }}'
+
+      - name: geo
+        description: '{{ doc("geo") }}'
+
+      - name: ecommerce
+        description: '{{ doc("ecommerce") }}'
+
+      - name: event_params
+        description: '{{ doc("event_params") }}'
+
+      - name: user_props
+        description: '{{ doc("user_props") }}'
+
+      - name: platform
+        description: '{{ doc("platform") }}'
+
+      - name: engagement_duration
+        description: '{{ doc("engagement_duration") }}'
+
+      - name: engagement_time_msec
+        description: '{{ doc("engagement_time_msec") }}'
+
+      - name: term
+        description: '{{ doc("term") }}'
+
+      - name: traffic_source
+        description: '{{ doc("traffic_source") }}'
+
+      - name: query_params
+        description: '{{ doc("query_params") }}'

@@ -1,0 +1,81 @@
+# Going to start testing the new dbt Metrics here. #
+version: 2
+
+metrics:
+  ## EXAMPLE ##
+#   - name: users
+#     label: Users
+#     model: ref('int_ga4__pages_grouped')
+#     description: '{{ doc("users") }}'
+
+#     type: count_distinct
+#     sql: user_key
+
+#     timestamp: session_date
+#     time_grains: [hour, day, week, month]
+
+#     dimensions:
+#       - page_path
+
+#     filters:
+#       - field: ...
+#         operator: ...
+#         value: ...
+
+#     meta: ...
+
+
+  - name: avg_engagement_duration
+    label: Average Engagement Duration
+    model: ref('ga4__events')
+    description: "BLAH BLAH BLAH"
+
+    type: average
+    sql: engagement_time_msec * 1000
+
+    timestamp: event_timestamp
+    time_grains: [day, week, month]
+
+    dimensions:
+      - page_path
+
+    filters:
+      - field: event_name
+        operator: '='
+        value: "'page_view'"
+
+
+  - name: pageviews
+    label: Pageviews
+    model: ref('ga4__events')
+    description: "BLAH BLAH BLAH"
+
+    type: count
+    sql: event_name
+
+    timestamp: event_timestamp
+    time_grains: [day, week, month]
+
+    dimensions:
+      - page_path
+
+    filters:
+      - field: event_name
+        operator: '='
+        value: "'page_view'"
+
+#   - name: avg_pageviews
+#     label: Average Pageviews
+#     model: ref('ga4__events')
+#     description: "BLAH BLAH BLAH"
+
+#     type: average
+#     sql: "{{ metric('pageviews') }}"
+
+#     timestamp: event_timestamp
+#     time_grains: [day, week, month]
+
+#     dimensions:
+#       - page_path
+#       - device.category
+#       - traffic_source.default_channel_grouping
